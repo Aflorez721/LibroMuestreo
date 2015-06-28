@@ -2,7 +2,11 @@
 <<echo=FALSE>>=
 library(TeachingSampling)
 library(xtable)
+<<<<<<< HEAD
 options(scipen = 100, digits = 4)
+=======
+options(scipen = 100, digits = 2)
+>>>>>>> 45de4e3cb11fa2e2164bf823783ce0f312749e37
 set.seed(12345)
 library(knitr)
 @
@@ -216,7 +220,11 @@ dim(BigLucy)
 
 Las probabilidades de inclusión deben ser creadas y están dadas por (\ref{prop}). Nótese que se debe fijar un tamaño esperado de muestra. Para que los resultados sean comparables, se utilizará un tamaño esperado de muestra de $n(S)=400$. Una vez que las probabilidades de inclusión para todas las empresas del sector industrial han sido creadas, se debe verificar que cada una de ellas sea menor a la unidad; para esto, se utiliza la función \texttt{which} que \textsf{R} trae implementada en su ambiente básico y cuya salida es un conjunto de índices para los cuales la instrucción dentro del paréntesis es verdadera; cuando no existe ningún índice que cumpla \texttt{(pik>1)}, la función arroja la siguiente salida \texttt{integer(0)}. Sin embargo, si hubiese existido algún registro para el cual la instrucción \texttt{(pik>1)} sea cierta, se deben convertir las respectivas probabilidades de inclusión en la unidad.
 
+<<<<<<< HEAD
 <<message=FALSE>>=
+=======
+<<>>=
+>>>>>>> 45de4e3cb11fa2e2164bf823783ce0f312749e37
 attach(BigLucy)
 N <- dim(BigLucy)[1]
 n <- 2000
@@ -246,11 +254,22 @@ plot(pik, Taxes)
 
 Para seleccionar la muestra bajo un diseño de muestreo Poisson, se utiliza la función \texttt{S.PO} del paquete \texttt{TeachingSampling}. Esta función consta de dos argumentos, \texttt{N}, el tamaño poblacional y \texttt{pik}, el vector de probabilidades de inclusión para cada elemento de la población. En nuestro caso, \texttt{pik} es el vector de pro\-ba\-bi\-li\-da\-des creado anteriormente; pero, en general, puede ser utilizado cualquier vector de números entre cero y uno. La función \texttt{S.PO} devuelve un conjunto de índices que aplicados a la población resulta en los valores de las características de interés para cada miembro de la muestra seleccionada.
 
+<<<<<<< HEAD
 <<message=FALSE>>= 
 sam <- S.PO(N, pik)
 muestra <- BigLucy[sam,]
 attach(muestra)
 
+=======
+<<>>= 
+sam <- S.PO(N, pik)
+muestra <- BigLucy[sam,]
+@
+<<results='hide'>>=
+attach(muestra)
+@
+<<>>=
+>>>>>>> 45de4e3cb11fa2e2164bf823783ce0f312749e37
 head(muestra)
 n.s <- dim(muestra)[1]
 n.s
@@ -258,7 +277,11 @@ n.s
 
 En este caso particular, la primera empresa seleccionada es la identificada con el número \Sexpr{muestra[1,1]}. Nótese que el marco de muestreo incluye la ca\-rac\-te\-rís\-ti\-ca auxiliar Ingreso y que el tamaño efectivo de muestra es \Sexpr{n.s}. Una vez que el trabajo de campo ha concluido, comienza la etapa de estimación, en donde se utilizará la función \texttt{E.PO} del paquete \texttt{TeachingSampling} que consta de dos argumentos, la matriz o vector de valores de la o las características de interés y \texttt{pik.s} los valores del vector de probabilidad de inclusión de cada uno de los elementos seleccionados en la muestra. En este caso particular se crea un conjunto de datos con la información muestral de las características de interés llamado \texttt{estima}. Nótese que la longitud del vector \texttt{pik.s} es de \Sexpr{n.s}. La función \texttt{E.PO} devuelve las estimaciones del total poblacional, la varianza estimada y el respectivo coeficiente de variación de la(s) característica(s) de interés.
 
+<<<<<<< HEAD
 <<results='hide'>>= 
+=======
+<<>>=
+>>>>>>> 45de4e3cb11fa2e2164bf823783ce0f312749e37
 pik.s <- pik[sam]
 estima <- data.frame(Income, Employees, Taxes)
 E.PO(estima, pik.s)
@@ -538,10 +561,19 @@ La eficiencia de la estrategia de muestreo, depende de dos aspectos. Primero, el
 
 Se quiere estimar, el total poblacional de las características de interés Empleados e Impuestos, para lo cual, se utilizará una estrategia de muestreo que utiliza un diseño de muestreo con reemplazo y probabilidades de selección de las empresas proporcionales al tamaño de la característica auxiliar Ingreso junto con el estimador de Hansen-Hurwitz. Como se vio antes, para que esta estrategia de muestreo sea óptima con respecto a una que utilice un diseño aleatorio simple con reemplazo se deben cumplir ciertas condiciones. Antes de analizarlas, veamos que, para este caso particular y con un tamaño de muestra igual a $m = 2000$, el diseño de muestreo PPT es menos eficiente que el muestreo simple con reemplazo para la estimación del total de empleados, aunque es más eficiente que el muestreo simple con reemplazo para la estimación del total de impuestos declarados. Lo anterior se tiene utilizando la expresión (4.2.13) escrita en código de \textsf{R}.
 
+<<<<<<< HEAD
 <<message=FALSE>>=
 data(BigLucy)
 attach(BigLucy)
 
+=======
+<<results='hide'>>=
+data(BigLucy)
+attach(BigLucy)
+@
+
+<<>>=
+>>>>>>> 45de4e3cb11fa2e2164bf823783ce0f312749e37
 N <- nrow(BigLucy)
 m <- 2000
 
@@ -620,12 +652,24 @@ abline(M.E, col="red")
 
 Una vez se ha decidido usar la estrategia de muestreo PPT, es necesario seleccionar la muestra. En este caso, se ha querido utilizar el mismo tamaño de muestra, que en las anteriores estrategias de muestreo. En primer lugar, se adjunta el marco de muestreo que no sólo contiene la ubicación e identificación sino además el va\-lor de la información auxiliar Ingreso para cada empresa del sector industrial. La selección de la muestra se hace mediante el uso de la función S.PPS para la cual los argumentos introducido son \texttt{m = 2000} junto con la información auxiliar \texttt{Income}. Esta función utiliza el algoritmo de selección acumulativo total.
 
+<<<<<<< HEAD
 <<message=FALSE>>= 
 pk <- Income / sum(Income)
 sam <- S.PPS(m, Income)
 muestra <- BigLucy[sam,]
 attach(muestra)
 
+=======
+<<>>= 
+pk <- Income / sum(Income)
+sam <- S.PPS(m, Income)
+muestra <- BigLucy[sam,]
+@
+<<results='hide'>>=
+attach(muestra)
+@
+<<>>=
+>>>>>>> 45de4e3cb11fa2e2164bf823783ce0f312749e37
 head(muestra)
 @
 
@@ -902,6 +946,7 @@ Por otra parte, se cumple que para todo $k \neq l$, $\pi_{kl}>0$ y $\Delta_{kl}<
 \end{Res}
 
 Con el anterior resultado se establece que este método de selección de muestras no induce probabilidades de inclusión estrictamente proporcionales a la ca\-rac\-te\-rís\-ti\-ca de información auxiliar. \citeasnoun{Sar} afirman que relajar un poco este supuesto es un precio menor que debe pagarse para que el esquema de selección sea ejecutable en la práctica.
+<<<<<<< HEAD
 
 \begin{Eje}
 Volviendo con la población ejemplo $U$. Suponga que se tiene acceso a los valores de la característica de información auxiliar $x$ para todos los elementos de la población. Es posible seleccionar una muestra $\pi$PT de tamaño $n=3$ con el método de Sunter. Para tal fin, es necesario recurrir a la función \texttt{S.piPS} del paquete \texttt{TeachingSampling}.
@@ -1301,3 +1346,5 @@ $$\mathbf{x}=\{1005, 1072,  884,  907, 1068,  625,  705,  909, 692,  891, 1046, 
 \item Asumiendo que los datos del ejercicio 4.5 provienen de un diseño de muestreo PPT, calcule la estimación de Hansen-Hurwitz para el total de la característica de interés, reporte el coeficiente de variación estimado y un intervalo de confianza al 95\%. También calcule la estimación de Horvitz-Thompson para el total de la característica de interés.
 \end{enumerate} 
 
+=======
+>>>>>>> 45de4e3cb11fa2e2164bf823783ce0f312749e37
