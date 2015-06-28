@@ -7,6 +7,10 @@
 Diseño de encuestas y \\
 estimación de parámetros}}}
 %
+
+\vspace{1cm}
+{\textsf SEGUNDA EDICIÓN \\}
+%
 \newpage
 % ----------------------------------------------------------- (en blanco)
 \thispagestyle{empty}
@@ -22,103 +26,25 @@ Diseño de encuestas y \\
 estimación de parámetros}}}
 %
 
-%\hspace{6.3cm}\textsf{PRIMERA EDICIÓN}
-\vspace{5cm}
+\vspace{1cm}
+{\textsf SEGUNDA EDICIÓN \\}
 
-{\huge Hugo Andrés Gutiérrez}
+\vspace*{5cm}
+{\Huge Andrés Gutiérrez, PhD.}
 
-\vspace{5.0cm}
-{\Large Facultad de Estadística}
-
-{\Large Universidad Santo Tomás}
-
-\newpage
-
-% ----------------------------------------------------------- Página legal
-\thispagestyle{empty}
-{\footnotesize
-\vspace*{1cm}
-\noindent
-\textbf{Consejo Editorial}\\ \\
-
-\noindent
-P. José Antonio Balaguera Cepeda, O.P.\\
-\noindent
-Rector General\\\\
-\noindent
-P. Pedro José Díaz Camacho, O.P.\\
-\noindent
-Vicerrector Académico General\\\\
-\noindent
-P. Luis Francisco Sastoque Poveda\\
-\noindent
-Vicerrector Administrativo y Financiero General\\\\
-\noindent
-P. Carlos Mario Alzate Montes, O.P.\\
-\noindent
-Vicerrector de la VUAD\\\\
-\noindent
-Omar Parra Rozo\\
-\noindent
-Director de la Unidad de Investigaciones\\\\
-\noindent
-Fray Javier Antonio Hincapié Ardila, O.P.\\
-\noindent
-Director Departamento de Publicaciones\\\\
-\noindent
-María Andrea López Guzmán\\
-\noindent
-Editora
-
-\vspace*{2cm}
+\vspace*{4cm}
 \noindent
 ISBN: 978-958-631-608-8\\
 \noindent
-Hecho el depósito legal que establece la ley\\
-
-\noindent
 Derechos reservados\\
-
 \noindent
-\copyright Hugo Andrés Gutiérrez\\
-\copyright Universidad Santo Tomás
-
-\vspace*{1cm}
-
-\noindent
-UNIVERSIDAD SANTO TOMÁS\\
-Departamento de Publicaciones\\
-Carrera 13 No. 54 - 39\\
-Teléfonos: 2497121 - 2351975\\
-   
-\noindent   
-\texttt{{http:// www.usta.edu.co}}\\   
-\texttt{{editorial@usantotomas.edu.co}}
-
-\vspace*{1cm}
-
-\noindent
-Bogotá, D.C., 2009
-
-}
+Bogotá, D.C., 2015
 
 \newpage
-% -----------------------------------------------------------   Dedicatoria
+% ----------------------------------------------------------- (en blanco)
 \thispagestyle{empty}
-\vspace*{4cm}
-
-\begin{flushright}
-{\Large
-\textsf{A mi padre,\\
-Hugo Gutiérrez Moreno,\\
-en medio de la esperanza bienaventurada.}
-}
-\end{flushright}
-% -----------------------------------------------------------   Blanco
+\
 \newpage
-\thispagestyle{empty}
-% --------------------------------------------------------------------------------
-
-
+% -----------------------------------------------------------   Página principal - 
 
 
