@@ -1,0 +1,45 @@
+\documentclass[10pt]{book}
+\usepackage[full]{harvard}
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amsfonts,amssymb,amsthm,amscd,enumerate}
+\usepackage{makeidx}
+
+
+\begin{document}
+\selectlanguage{spanish}
+\bibliographystyle{agsm}
+
+% --------------------------------------------------------------------------------
+\numberwithin{equation}{section}
+\def\bPi{\mbox{\boldmath$\Pi$}}
+\def\bgamma{\mbox{\boldmath$\gamma$}}
+\def\beps{\mbox{\boldmath$\varepsilon$}}
+\def\bbeta{\mbox{\boldmath$\beta$}}
+\def\blambda{\mbox{\boldmath$\lambda$}}
+\def\bBeta{\mbox{\boldmath$\Beta$}}
+\def\btheta{\mbox{\boldmath$\theta$}}
+\def\bmu{\mbox{\boldmath$\mu$}}
+\def\bSigma{\mbox{\boldmath$\Sigma$}}
+\def\bphi{\mbox{\boldmath$\phi$}}
+\def\bpi{\mbox{\boldmath$\pi$}}
+\def\bxi{\mbox{\boldmath$\xi$}}
+
+\theoremstyle{definition}
+\newtheorem{Eje}{Ejemplo}
+\numberwithin{Eje}{section}
+
+\newtheoremstyle{mydef}{}{}{\slshape}{}{\bfseries}{.}{ }{}
+\theoremstyle{mydef}
+\newtheorem{Res}{Resultado}
+\numberwithin{Res}{section}
+\newtheorem{Defi}{Definición}
+\numberwithin{Defi}{section}
+% --------------------------------------------------------------------------------
+\mainmatter
+\Sexpr{knit_child('cap1.Rnw')}
+% --------------------------------------------------------------------------------
+\bibliography{LibroBib}
+% --------------------------------------------------------------------------------
+% --------------------------------------------------------------------------------
+\end{document}
