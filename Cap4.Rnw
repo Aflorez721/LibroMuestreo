@@ -3,6 +3,7 @@
 library(TeachingSampling)
 library(xtable)
 options(scipen = 100, digits = 4)
+options(scipen = 100, digits = 2)
 set.seed(12345)
 library(knitr)
 @
@@ -251,6 +252,8 @@ sam <- S.PO(N, pik)
 muestra <- BigLucy[sam,]
 attach(muestra)
 
+sam <- S.PO(N, pik)
+muestra <- BigLucy[sam,]
 head(muestra)
 n.s <- dim(muestra)[1]
 n.s
@@ -626,7 +629,9 @@ sam <- S.PPS(m, Income)
 muestra <- BigLucy[sam,]
 attach(muestra)
 
-head(muestra)
+pk <- Income / sum(Income)
+sam <- S.PPS(m, Income)
+muestra <- BigLucy[sam,]
 @
 
 El método acumulativo total no tiene en cuenta ningún ordenamiento. En este caso particular, la última empresa en ser seleccionada fue la empresa con número de identificación \Sexpr{muestra[1,1]}, aunque esta empresa ya había sido seleccionada en la muestra en dos ocasiones. Es decir, fue seleccionada en tres ocasiones.
@@ -1150,64 +1155,45 @@ Para nuestra población de ejemplo $U$, existen $\binom{N}{n}=10$ posibles muest
 
 \index{Marco y Lucy}En este apartado de Marco y Lucy suponga que se tienen las mismas condiciones que en el apartado de Marco y Lucy del diseño de muestreo PPT (ver la sección 4.2.4). Siendo así, el marco de muestreo permite conocer los valores poblacionales de una característica de información auxiliar. En este caso ésta es la variable \texttt{Income}. Dadas las bondades del marco de muestreo, se quiere seleccionar una muestra de tamaño \texttt{n=2000} mediante un diseño de muestreo sin reemplazo que induzca probabilidades de inclusión proporcionales a esta característica de información auxiliar.
 
-La selección de la muestra se realiza haciendo uso de la función \texttt{S.piPS} del paquete \texttt{TeachingSampling} para la cual los argumentos introducidos son: el vector de valores poblacionales de la característica de información auxiliar \texttt{Income} y el tamaño de la muestra sin reemplazo \texttt{n=2000}. Nótese que esta función utiliza el algoritmo de selección de Sunter. XXXXXXXXXXXXXX
+La selección de la muestra se realiza haciendo uso de la función \texttt{S.piPS} del paquete \texttt{TeachingSampling} para la cual los argumentos introducidos son: el vector de valores poblacionales de la característica de información auxiliar \texttt{Income} y el tamaño de la muestra sin reemplazo \texttt{n=2000}. Nótese que esta función utiliza el algoritmo de selección de Sunter. 
 
-\begin{verbatim}
-> data(Lucy)
-> attach(Lucy)
-> N <- dim(Lucy)[1]
-> n <- 400
-> pik <- n*Income/sum(Income)
-> sam <- S.piPS(n, Income)
-> muestra <- Lucy[sam,]
-> attach(muestra)
-> muestra
+<<message=FALSE>>=
+data(BigLucy)
+attach(BigLucy)
 
-     Identificador Ubicación   Level Zona Income
-2338        AB1132    c25k61  Grande    A    2510
-2370         AB749    c25k93  Grande    D    1911
-2329        AB1096    c25k52  Grande    A    1620
-...
-1367         AB388    c14k80 Pequeño    C      96
-284          AB148     c3k86 Pequeño    B      91
-755          AB191     c8k62 Pequeño    C      76
-\end{verbatim}
+N <- dim(BigLucy)[1]
+n <- 2000
+res <- S.piPS(n, Income)
+sam <- res[,1]
+muestra <- BigLucy[sam,]
+attach(muestra)
+head(muestra)
+@
 
 El resultado de la función \texttt{S.piPS} es una muestra ordenada de forma descendente por los valores de la característica de información auxiliar. El siguiente paso es recolectar la información de las características de interés \texttt{Employees} e \texttt{Taxes} para los elementos incluidos en la muestra realizada.
 
 Después de recolectar la información, es necesario estimar los totales de las características de interés. En esta etapa se utiliza la función \texttt{E.piPS} del paquete \texttt{TeachingSampling} cuyos argumentos son: \texttt{estima}, correspondiente a la lista que contiene los valores observados en la muestra para cada una de las características de interés y \texttt{pik.s}, correspondiente al vector de probabilidades de inclusión (proporcionales a la característica de información auxiliar) de los elementos en la muestra.
 
-\begin{verbatim}
-> pik.s <- pik[sam]
-> estima <- data.frame(Income, Employees, Taxes)
-
-> E.piPS(estima, pik.s)
-                               Income    Employees        Taxes
-Total estimado           1.035217e+06 1.515538e+05 2.821118e+04
-Varianza                 3.559408e-23 2.288151e+07 4.403830e+05
-coeficiente de variación 5.763117e-16 3.156279e+00 2.352307e+00
-\end{verbatim}
+<<results='hide'>>=
+pik.s <- res[,2]
+estima <- data.frame(Income, Employees, Taxes)
+E.piPS(estima, pik.s)
+@
 
 Los resultados para este ejercicio particular son excelentes. Nótese que los estimativos de la varianza no son exactos, pues están dados por el resultado 4.4.2, aunque sí aproximados. Por otra parte, el resultado 4.3.4 asegura que éstos serían menores a los arrojados por la estrategia de muestreo que utiliza un diseño PPT con reemplazo y el estimador de Hansen-Hurwitz. Por supuesto, este diseño de muestreo es más eficiente que el de Poisson, no es de extrañar que los resultados para la variable Ingreso sean tan exactos. Recuérdese que ésta fue la variable utilizada como característica de información auxiliar. La siguiente tabla muestra los resultado para un ejercicio particular. Una vez más, la característica Impuestos tiene un menor coeficiente de variación estimado puesto que está mucho mejor correlacionada con la variable Ingreso.
 
+<<echo = FALSE, results = 'asis'>>=
+Estimaciones = E.piPS(estima, pik.s)
+T4.3 <- xtable(Estimaciones, caption ="\\emph{Muestreo $pi$PT: estimación de los totales de las características de interés}", label ="T4.3")
+print(T4.3, caption.placement="top")
+@
+
 Véase que para obtener estos resultados, fue necesario conocer el valor de $N$ dado por la longitud del vector de información auxiliar. Nótese que no siempre se puede asegurar el conocimiento del total poblacional. Sin embargo, aunque no se conociera, con la función \texttt{HT} se hubiera llegado a los mismos resultados, en términos de la estimación de los totales, pero no se obtendrían los estimativos concernientes a la varianza, tal y como se ilustra a continuación.
 
-\begin{verbatim}
-> HT(estima, pik.s)
-     Income     Employees      Taxes
-[1,] 1035217     151553.8   28211.18
-\end{verbatim}
+<<>>=
+HT(estima, pik.s)
+@
 
-\begin{table}[htb]
-\centering
-\caption[Muestreo $\pi$PT: estimación de totales]{\emph{Muestreo $\pi$PT: estimación de los totales de las características de interés.}}
-\begin{tabular}{ccccc}\hline\hline
-Variable & Total poblacional & Total estimado & cve \% & Desv. \% \\\hline
-Ingreso  & 1035217           & 1035217         & 0.000   & 0.000\\
-Empleados& 151950            & 151553          & 3.156   & -0.002\\
-Impuestos& 28654             & 28211           & 2.352   & -0.015\\\hline\hline
-\end{tabular}
-\end{table}
 
 \section{Ejercicios}
 
@@ -1287,12 +1273,12 @@ $x_k$ & $y_k$ \\\hline
 \item Demuestre o refute la siguiente afirmación: <<Para la estimación de totales, el diseño PPT siempre es más eficiente que el diseño de muestreo aleatorio simple con reemplazo>>.
 
 \item Suponga una población de $N=12$ elementos cuyos valores observados para la característica de interés son
-$$\mathbf{y}=\{50, 53, 44, 45, 53, 31, 35, 45, 34, 44, 52, 52\}$$
+$${y}=\{50, 53, 44, 45, 53, 31, 35, 45, 34, 44, 52, 52\}$$
 
 y los valores observados para la característica de información auxiliar son
-$$\mathbf{x}=\{1005, 1072,  884,  907, 1068,  625,  705,  909, 692,  891, 1046, 1052\}$$
+$${x}=\{1005, 1072,  884,  907, 1068,  625,  705,  909, 692,  891, 1046, 1052\}$$
     \begin{itemize}
-      \item Calcule la correlación entre \texttt{x} e \texttt{y2/x}
+      \item Calcule la correlación entre $y^2/x$ y $x$.
       \item Realice un gráfico de dispersión para \texttt{y/x} y explique si se puede afirmar que la razón es constante para los elementos de la población.
       \item Utilice el análisis de regresión simple para estimar el valor del intercepto y decida si este es estadísticamente diferente de cero.
       \item Para un tamaño de muestra $m=6$, utilice la expresión (4.2.13) y los anteriores argumentos para justificar o descalificar la escogencia del diseño de muestreo PPT para esta población.
@@ -1300,4 +1286,5 @@ $$\mathbf{x}=\{1005, 1072,  884,  907, 1068,  625,  705,  909, 692,  891, 1046, 
 
 \item Asumiendo que los datos del ejercicio 4.5 provienen de un diseño de muestreo PPT, calcule la estimación de Hansen-Hurwitz para el total de la característica de interés, reporte el coeficiente de variación estimado y un intervalo de confianza al 95\%. También calcule la estimación de Horvitz-Thompson para el total de la característica de interés.
 \end{enumerate} 
+
 
