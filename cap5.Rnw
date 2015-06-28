@@ -1,0 +1,309 @@
+%--------------------
+<<echo=FALSE>>=
+library(TeachingSampling)
+library(xtable)
+options(scipen = 100, digits = 4)
+set.seed(12345)
+library(knitr)
+@
+%--------------------
+\chapter[Muestreo estratificado]{Muestreo estratificado}
+
+\begin{quote}
+\textsf{La estratificación es una de las técnicas más difundidas y usadas en muestreo puesto que tiene funcionalidades estadísticas y administrativas que la hacen atractiva: permite tratar con subpoblaciones, aumenta la eficiencia de las estimaciones y contribuye a la ad\-mi\-nis\-tra\-ción eficiente de grandes encuestas.}
+\begin{flushright}
+\textsf{Richard Valliant (2000)}
+\end{flushright}
+\end{quote}
+
+En algunas ocasiones, la característica de interés tiende a tomar distintos va\-lo\-res promedio con respecto a subgrupos poblacionales. De alguna manera, si la población tiene un comportamiento diferente en estos subgrupos, es posible mejorar la precisión de las estimaciones tomando muestras independientes en cada uno de los subgrupos poblacionales. Lo anterior es intuitivo cuando entre los subgrupos  existe mucha variabilidad, pero dentro de ellos la variabilidad es constante.
+
+En general, cuando existe en el marco de muestreo información auxiliar que permite la división de la población en $H$ subgrupos con el objetivo de seleccionar una muestra en cada subgrupo, se dice que la estrategia de muestreo utiliza un \textbf{diseño de muestreo estratificado} y el nombre de los subgrupos, formados antes de la recolección de la información, se denomina \textbf{estratos}. Nótese la diferencia con los subgrupos poblacionales llamados \textbf{dominios}, en donde la partición de la población se realiza después de la recolección de la información.
+
+Con frecuencia, tenemos información adicional que nos ayuda a diseñar la estrategia de muestreo. Cuando esta información se refiere a la pertenencia de cada uno de los elementos a un subgrupo, podemos aplicar una estrategia que utilice un diseño de muestreo estratificado. No es solamente la disponibilidad de esta información auxiliar la que nos lleva a utilizar un diseño de muestreo estratificado, además de esto:
+
+\begin{enumerate}
+  \item La variable de interés asume distintos valores promedio en diferentes sub-poblaciones.
+  \item De una u otra forma (proceso logístico y/o de recolección de datos) es mejor estratificar y dividir la población en particiones. \citeasnoun{Leh} afirman que algunas variables típicas de estratificación son de tipo regional (municipio, estado o provincia), demográfico (género o grupo de edad) y socioeconómico (grupo de ingresos). Existen censos, en periodos anteriores que pueden contener esta valiosa información.
+\end{enumerate}
+
+La necesidad de estratificar\footnote{Dividir la población en $H$ estratos disjuntos.} la población surge por una o más de las siguientes razones:
+
+\begin{itemize}
+  \item Por razones administrativas. Existen marcos de muestreo que ya tienen dividida la población en subgrupos formados naturalmente.
+  \item Se desea garantizar que la muestra seleccionada sea representativa con res\-pec\-to al comportamiento de la población según la información auxiliar. Al seleccionar una muestra aleatoria simple de una población de personas, podría suceder que la muestra seleccionada no incluyera a ningún hombre.
+  \item Se requieren estimativos con alta precisión discriminados para cada sub-población. Aumentar el tamaño de muestra en los estratos menos representados.
+  \item Menor Coste. Distintos esquemas operativos para diversos estratos. Encuestas por correo para empresas grandes. Menor tamaño de muestras en zonas de tolerancia o zonas de difícil manejo del orden público.
+  \item Reducción de la varianza en la estimación. Personas de distintas edades con distintas presiones sanguíneas (estratificar por grupos de edad). Se reduce la varianza pues los estratos son homogéneos por dentro, pero heterogéneos entre sí.
+      \end{itemize}
+
+El objetivo del diseño estratificado es dar un tratamiento particular a cada subgrupo, ya sea por razones económicas, administrativas o logísticas. Es indispensable delimitar bien los subgrupos en la etapa de diseño. Por ejemplo, en un estudio dentro de una universidad, si se quiere averiguar el número de horas que los estudiantes permanecen enfrente de un computador, no es una buena idea (defecto técnico) dividir la población en cursos porque los cursos no brindan una partición de la población, dado que en distintos cursos pueden estar los mismos estudiantes.
+
+\section{Fundamentos teóricos}
+
+\index{Muestreo estratificado}Suponga que el marco de muestreo es tal que permite conocer la pertenencia de cada elemento de la población $U$ en $H$ sub-grupos poblacionales separados $U_h$ ($h=1,2,\ldots,H$) también llamados estratos. Éstos se definen como grupos de elementos mutuamente excluyentes. Cada elemento puede pertenecer a uno y sólo a un estrato. De tal forma que
+\begin{itemize}
+\item $\bigcup_{h=1}^H U_h=U$
+\item $U_h\bigcap U_i = \emptyset \ \ \ \ \ \ \    h\neq i$
+\end{itemize}
+
+Cada estrato $U_h$ es de tamaño $N_h$, por tanto
+\begin{equation}
+    \sum_{h=1}^HN_h=N
+\end{equation}
+
+Con la población dividida en $H$ estratos, el objetivo sigue siendo estimar los siguientes parámetros poblacionales
+
+\begin{enumerate}
+\item El total poblacional,
+\begin{equation}
+t_y=\sum_{k \in U}y_k=\sum_{h=1}^H\sum_{k\in U_h}y_k=\sum_{h=1}^Ht_{yh}
+\end{equation}
+donde $t_{yh}=\sum_{k\in U_h}y_k$
+\item La media poblacional,
+\begin{equation}
+\bar{y}=\frac{\sum_{k \in U}y_k}{N}=\frac{1}{N}\sum_{h=1}^H\sum_{k\in U_h}y_k=\frac{1}{N}\sum_{h=1}^HN_h\bar{y}_h
+\end{equation}
+donde $\bar{y}_h=\dfrac{1}{N_h}\sum_{k\in U_h}y_k$
+\end{enumerate}
+
+\citeasnoun{Sam} afirma que dependiendo de la naturaleza de los estratos, di\-fe\-ren\-tes estrategias de muestreo pueden ser utilizadas en diferentes estratos. De tal forma que, en ausencia de información auxiliar, se utilice una estrategia aleatoria simple en algunos estratos, mientras que para aquellos sub-grupos tales que el marco de muestreo permita el conocimiento de información auxiliar continua, es posible aplicar una estrategia de muestreo proporcional al tamaño, e incluso para aquellos sub-grupos en los que, por obligación (logística o técnica), se deba aplicar un censo.
+
+Es importante aclarar que la selección de las $H$ muestras es realizada de manera independiente en cada estrato.\footnote{Esto se debe a la independencia entre las selecciones. Aunque se conozcan qué unidades serán incluidas en la muestra de algún estrato, este conocimiento no afecta, de ninguna manera, la inclusión de cualquier otra unidad en los restantes estratos.} De tal forma que la muestra aleatoria $S$\footnote{Nótese que $S$ es una variable aleatoria y que las medidas de probabilidad utilizadas para la selección de muestras en cada estrato son distintas.} queda definida por
+\begin{equation}
+    S=\bigcup_{h=1}^HS_h.
+\end{equation}
+
+En particular, si la muestra seleccionada es $s$, entonces
+\begin{equation}
+    s=\bigcup_{h=1}^Hs_h.
+\end{equation}
+
+Nótese que si el tamaño de muestra en cada estrato es igual a $n_h$, entonces el tamaño de la muestra seleccionada mediante un diseño de muestreo estratificado es
+\begin{equation}
+    n=\sum_{h=1}^Hn_h.
+\end{equation}
+
+Así, para cada estrato $h \ \ \ h=1,\ldots,H$ existe un conjunto de todas las posibles muestras denotado como soporte del estrato $h$, o $Q_h$. Cada uno de los soportes $Q_h$ induce la definición del soporte general de la siguiente manera
+\begin{equation}
+    Q^H=\bigcup_{h=1}^HQ_h.
+\end{equation}
+
+La cardinalidad de cada soporte $Q_h$ depende del diseño de muestreo utilizado en la selección de la muestra del estrato $h$. Así
+\begin{equation}
+    \#Q^H=\prod_{h=1}^H\#Q_h.
+\end{equation}
+
+Por supuesto, el diseño de muestreo estratificado es un autentico diseño de muestreo como lo enuncian los siguientes resultados.
+
+\begin{Res}
+\index{Diseño de muestreo estratificado}Siendo $p_1(s_1),p_2(s_2),\ldots,p_H(s_H)$ los diseños de muestreo utilizados en cada estrato $h \ \ \ h=1,\ldots,H$, entonces el diseño de muestreo estratificado se define como
+\begin{equation}\label{disestra}
+p(s)=\prod_{h=1}^Hp_h(s_h)
+\end{equation}
+\end{Res}
+
+\begin{proof}
+Se tiene que
+\begin{align*}
+p(s)&=Pr(\text{Seleccionar $s_1$ de $U_1$, $\cdots$, Seleccionar $s_H$ de $U_H$,})\\
+&=p_1(s_1)\cdots p_H(s_H),
+\end{align*}
+puesto que el proceso de selección es independiente en cada estrato.
+\end{proof}
+
+\begin{Res}
+El diseño de muestreo estratificado cumple que
+\begin{enumerate}
+\item $p(s)\geq0$ para todo $s\in Q$
+\item $\sum_{s\in Q}p(s)=1$
+\end{enumerate}
+\end{Res}
+
+\begin{proof}
+La primera propiedad se tiene de inmediato puesto que todas las expresiones en \ref{disestra} son mayores o iguales a cero. La segunda propiedad se tiene por inducción matemática sobre el número de estratos.
+
+\begin{itemize}
+\item Si $H=2$ existen dos soporte, uno para cada estrato, $Q_1$ definido como
+\begin{equation}
+    Q_1=\left\{s_{11},s_{12},\ldots,s_{1H_1}\right\}
+\end{equation}
+y $Q_2$  definido como
+\begin{equation}
+    Q_2=\left\{s_{21},s_{22},\ldots,s_{2H_2}\right\}
+\end{equation}
+tales que
+\begin{equation}
+    Q^2=\left\{s_{11}\bigcup s_{21},s_{11}\bigcup s_{22},\ldots,s_{11}\bigcup s_{2H_2},\ldots, s_{1H_1}\bigcup s_{2H_2} \right\}
+\end{equation}
+
+Ahora, como la selección de las muestras se realiza en forma independiente, en particular se tiene que
+\begin{equation}
+p\left(s_{11}\bigcup s_{21}\right)=p(s_{11})p(s_{21})
+\end{equation}
+
+de manera análoga para el elemento que pertenezca al soporte. Ahora,
+\begin{align*}
+\sum_{s\in Q}p(s)&=p(s_{11})p(s_{21})+p(s_{11})p(s_{22})+\ldots+p(s_{11})p(s_{2H_2})+\\
+&\ldots+p(s_{1H_1})p(s_{21})+p(s_{1H_1})p(s_{22})+\ldots+p(s_{1H_1})p(s_{2H_2})\\
+&=p(s_{11})[\underbrace{p(s_{21})+p(s_{22})+\ldots+p(s_{2H_2})}_{1}]+\\
+&\ldots+p(s_{1H_1})[\underbrace{p(s_{21})+p(s_{22})+\ldots+p(s_{2H_2})}_{1}]\\
+&=p(s_{11})+\ldots+p(s_{1H_1})\\
+&=1
+\end{align*}
+
+\item Si $H=k$, se supone que
+\begin{equation}
+\sum_{s\in Q^k}p(s)=1
+\end{equation}
+donde
+\begin{equation}
+    Q^k=\left\{\bigcup_{h=1}^ks_h\ \ \ | \ \ s_h\in Q_h\right\}.
+\end{equation}
+
+\item Si $H=k+1$, se tienen $k+1$ soportes tales que
+\begin{equation}
+\begin{split}
+    Q_1&=\left\{s_{11},s_{12},\ldots,s_{1H_1}\right\}\\
+    \vdots\\
+    Q_k&=\left\{s_{k1},s_{k2},\ldots,s_{kH_k}\right\}\\
+    Q_{k+1}&=\left\{s_{k+1,1},s_{k+1,2},\ldots,s_{k+1,H_{k+1}}\right\}
+\end{split}
+\end{equation}
+Por consiguiente se tiene que
+\begin{align*}
+\sum_{s\in Q}p(s)&=p(s_{k+1,1})\left[\underbrace{\sum_{s\in Q^k}p(s)}_{1}\right]
++\ldots+p(s_{k+1,1H_{k+1}})\left[\underbrace{\sum_{s\in Q^k}p(s)}_{1}\right]\\
+&=p(s_{k+1,1})+\ldots+p(s_{k+1,H_{k+1}})\\
+&=1
+\end{align*}
+\end{itemize}
+\end{proof}
+
+\subsection{Estimación en el muestreo estratificado}
+
+\index{Diseño de muestreo estratificado}Si uno de los propósitos de la estratificación es obtener estimaciones más precisas, cabe preguntarse qué forma toman los estimadores y cómo definirlos a través de los estratos; pero aun más ¿qué forma toma la varianza del estimador en los estratos y su varianza estimada?. Los siguientes resultados, responden a los anteriores cuestionamientos.
+
+\begin{Res}
+Si $\hat{t}_{yh}$ estima insesgadamente el total de la característica de interés $t_{yh}$ del subgrupo poblacional $h$ con varianza igual a $Var(\hat{t}_{yh})$, entonces un estimador insesgado para el total poblacional $t_y$ está dado por
+\begin{equation}
+\hat{t}_y=\sum_{h=1}^H\hat{t}_{yh}
+\end{equation}
+
+el cual tiene una varianza igual a
+\begin{equation}
+Var(\hat{t}_y)=\sum_{h=1}^HVar(\hat{t}_{yh})
+\end{equation}
+\end{Res}
+
+\begin{proof}
+Dado que $\hat{t}_{yh}$ es insesgado, tenemos que
+\begin{align*}
+E\left(\sum_{h=1}^H\hat{t}_{yh}\right)&=\sum_{h=1}^HE\left(\hat{t}_{yh}\right)\\
+&=\sum_{h=1}^Ht_{yh}=t_y
+\end{align*}
+
+Por otro lado, acudiendo a la independencia de la selección de muestras en cada estrato
+
+\begin{align*}
+Var\left(\sum_{h=1}^H\hat{t}_{yh}\right)&=\sum_{h=1}^HVar\left(\hat{t}_{yh}\right)+
+\sum_{h=1}^H\sum_{i=1}^H\underbrace{Cov\left(\hat{t}_{yh},\hat{t}_{yi}\right)}_{0}\\
+&=\sum_{h=1}^HVar(\hat{t}_{yh})
+\end{align*}
+\end{proof}
+
+
+\begin{Res}
+Si $\widehat{Var}(\hat{t}_{yh})$ estima insesgadamente a $Var(\hat{t}_{yh})$, entonces un estimador insesgado para $Var(\hat{t}_{y})$ está dado por
+
+\begin{equation}
+\widehat{Var}(\hat{t}_{y})=\sum_{h=1}^H\widehat{Var}(\hat{t}_{yh})
+\end{equation}
+\end{Res}
+
+\begin{proof}
+La demostración es inmediata por el insesgamiento en cada uno de los estratos.
+\end{proof}
+
+\subsection[El estimador de Horvitz-Thompson]{El estimador de Horvitz-Thompson}
+
+\begin{Res} Para el diseño de muestreo estratificado, el estimador de Horvitz-Thompson, su varianza y su varianza estimada están dados por:
+
+\begin{equation}
+\hat{t}_{y,\pi}=\sum_{h=1}^H \hat{t}_{yh,\pi}
+\end{equation}
+\begin{equation}
+Var_{EST}(\hat{t}_{y,\pi})=\sum_{h=1}^H Var_{p_h}(\hat{t}_{yh,\pi})
+\end{equation}
+\begin{equation}
+\widehat{Var}_{EST}(\hat{t}_{y,\pi})=\sum_{h=1}^H \widehat{Var}_{p_h}(\hat{t}_{yh,\pi})
+\end{equation}
+
+donde
+\begin{equation}
+\hat{t}_{yh,\pi}=\sum_{k\in S_h}\dfrac{y_k}{\pi_k}
+\end{equation}
+Con $Var_{p_e}(\hat{t}_{yh,\pi})$ es la varianza de $\hat{t}_{yh,\pi}$ en el $h$-ésimo estrato y $\widehat{Var}_{p_h}(\hat{t}_{yh,\pi}$ es la estimación de $Var_{p_h}(\hat{t}_{yh,\pi})$ en el $h$-ésimo estrato.
+\end{Res}
+
+\begin{Eje}
+Nuestra población ejemplo $U$ dada por
+
+\begin{center}
+$U=\{\textbf{Yves, Ken, Erik, Sharon, Leslie}\}$
+\end{center}
+
+se divide en dos estratos de la siguiente forma
+
+\begin{center}
+$U_1=\{\textbf{Erik, Sharon}\}$
+\end{center}
+
+y el segundo conformado por:
+
+\begin{center}
+$U_2=\{\textbf{Yves, Ken, Leslie.}\}$
+\end{center}
+
+En el primer estrato se selecciona una muestra aleatoria de tamaño $n_1=1$ de acuerdo a un diseño de muestreo aleatorio simple sin reemplazo. Por otra parte, en el segundo estrato se selecciona una muestra de  tamaño $n_2=2$ de acuerdo al siguiente diseño de muestreo
+
+\begin{equation*}
+p_2(s)= \begin{cases} 1/4, &\text{si $s=\{\textbf{Yves, Ken}\}$},\\
+                       1/4, &\text{si $s=\{\textbf{Yves, Leslie}\}$},\\
+                       1/2, &\text{si $s=\{\textbf{Ken, Leslie}\}$.}
+           \end{cases}
+\end{equation*}
+
+Realice el cálculo léxico-gráfico para comprobar el insesgamiento del estimador de Horvitz-Thompson para todas las posibles muestras de tamaño $n=3$. Defina los soporte $Q_1$ y $Q_2$ así como el soporte general $Q^2$ para cada estrato.
+\end{Eje}
+
+En las próximas secciones se estudiarán los diseños estratificados más utilizados en la práctica.
+
+\section{Diseño de muestreo aleatorio estratificado}
+
+\index{Diseño de muestreo aleatorio estratificado}Al igual que el muestreo aleatorio simple sin reemplazo, el diseño de muestreo aleatorio estratificado (EST-MAS) es el más sencillo de los diseños estratificados. En este caso particular se selecciona una muestra aleatoria simple en cada estrato, de tal forma que las selecciones sean independientes. Este diseño de muestreo es utilizado cuando la variabilidad de la característica de interés dentro de los estratos es similar; en otras palabras, cuando se sabe que el comportamiento de la característica de interés al interior de los estratos es homogéneo. Sin embargo, también se utiliza cuando no se dispone de ninguna información auxiliar continua que permita hacer uso de diseños de muestreo, en cada estrato, que permitan mejorar la eficiencia de una muestra aleatoria simple.
+
+En cada estrato $h$ una muestra aleatoria simple sin reemplazo de tamaño $n_h$ es seleccionada, de manera independiente, de la población del estrato de tamaño $N_h$. Aunque el diseño de muestreo aleatorio simple es utilizado como un método final de selección de elemento, en conjunto el diseño estratificado puede resultar dramáticamente más eficiente que utilizar un diseño de muestreo aleatorio simple sin dividir la población.
+
+\begin{Defi}
+\index{Diseño de muestreo aleatorio estratificado}Para tamaños de muestra fijos en cada estrato, denotados como  $n_1,\ldots,n_H$, un diseño de muestreo se dice estratificado aleatorio simple sin reemplazo si la probabilidad de seleccionar una muestra de tamaño $n$ está dada por
+\begin{equation}
+p(s)= \begin{cases} \prod_{h=1}^H\frac{1}{\binom{N_h}{n_h}}, &\text{si $\sum_{h=1}^Hn_h=n$}\\
+                    0,                                       &\text{en otro caso}
+      \end{cases}
+\end{equation}
+\end{Defi}
+
+Nótese que $\sum_{s\in Q^H}p(s)=1$ porque $\#Q^H=\prod_{h=1}^H\binom{N_h}{n_h}$.
+
+\subsection{Algoritmos de selección}
+
+\index{Algoritmos de selección}En la selección de las muestras aleatorias simples sin reemplazo en cada estrato es posible utilizar los algoritmos de muestreo dados en el capítulo 3, de tal forma que los siguientes pasos se deben realizar.
+
+\begin{itemize}
+\item Separar la población en $H$ subgrupos o estratos mediante la caracterización poblacional de información auxiliar.
+\item En cada estrato seleccionar una muestra aleatoria simple sin reemplazo. Los algoritmos utilizados en la selección de la muestra dentro de cada estrato pueden ser los métodos coordinado negativo o el método de selección y rechazo de \citeasnoun{Fan}.
+\item Cada una de las $H$ selecciones es realizada de manera independiente
+\end{itemize}
+
+
