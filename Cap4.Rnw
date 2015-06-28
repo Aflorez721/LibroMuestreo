@@ -3,7 +3,6 @@
 library(TeachingSampling)
 library(xtable)
 options(scipen = 100, digits = 4)
-options(scipen = 100, digits = 2)
 set.seed(12345)
 library(knitr)
 @
@@ -254,7 +253,9 @@ attach(muestra)
 
 sam <- S.PO(N, pik)
 muestra <- BigLucy[sam,]
+attach(muestra)
 head(muestra)
+
 n.s <- dim(muestra)[1]
 n.s
 @
@@ -629,9 +630,7 @@ sam <- S.PPS(m, Income)
 muestra <- BigLucy[sam,]
 attach(muestra)
 
-pk <- Income / sum(Income)
-sam <- S.PPS(m, Income)
-muestra <- BigLucy[sam,]
+head(muestra)
 @
 
 El método acumulativo total no tiene en cuenta ningún ordenamiento. En este caso particular, la última empresa en ser seleccionada fue la empresa con número de identificación \Sexpr{muestra[1,1]}, aunque esta empresa ya había sido seleccionada en la muestra en dos ocasiones. Es decir, fue seleccionada en tres ocasiones.
@@ -1200,7 +1199,7 @@ HT(estima, pik.s)
 \begin{enumerate}[4.1]
 \item Demuestre o refute la siguiente afirmación: <<Cuando el comportamiento de la característica de interés es uniforme en la población es más conveniente utilizar diseños de muestreo proporcionales al tamaño de una característica de información auxiliar>>.
 
-\item Demuestre o refute la siguiente afirmación: <<En muestreo Poisson, cuando las probabilidades de inclusión son tales que $\pi_k=ny_k/t_y$ la varianza del estimador de Horvitz-Thompson es nula>>.
+\item Demuestre o refute la siguiente afirmación: <<En muestreo Poisson, cuando las probabilidades de inclusión son tales que $\pi_k=n y_k/t_y$ la varianza del estimador de Horvitz-Thompson es nula>>.
 
 \item Complete el cálculo léxico-gráfico del ejemplo 4.1.2.
 
@@ -1286,5 +1285,3 @@ $${x}=\{1005, 1072,  884,  907, 1068,  625,  705,  909, 692,  891, 1046, 1052\}$
 
 \item Asumiendo que los datos del ejercicio 4.5 provienen de un diseño de muestreo PPT, calcule la estimación de Hansen-Hurwitz para el total de la característica de interés, reporte el coeficiente de variación estimado y un intervalo de confianza al 95\%. También calcule la estimación de Horvitz-Thompson para el total de la característica de interés.
 \end{enumerate} 
-
-
