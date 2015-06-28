@@ -10,6 +10,17 @@
 \usepackage[right=3cm,left=3cm,top=3cm,bottom=3cm]{geometry}
 \setlength{\parindent}{0pt}
 \setlength\parskip{1.5mm}
+%
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\renewcommand{\chaptermark}[1]{\markboth{\thechapter.\ #1}{}}
+\renewcommand{\sectionmark}[1]{\markright{\thesection.\ #1}}
+\fancyhf{}
+\fancyhead[LE,RO]{\bfseries\sffamily\thepage}
+\fancyhead[LO]{\sffamily\rightmark}
+\fancyhead[RE]{\sffamily\leftmark}
+\renewcommand{\headrulewidth}{0.5pt}
+%
 %--------------------------------------------------------------------------------
 
 \begin{document}
