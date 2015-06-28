@@ -54,9 +54,9 @@
 \numberwithin{Defi}{section}
 % --------------------------------------------------------------------------------
 \mainmatter
-%\Sexpr{knit_child('portada.Rnw')}
-%\Sexpr{knit_child('cap1.Rnw')}
-%\Sexpr{knit_child('cap2.Rnw')}
+\Sexpr{knit_child('portada.Rnw')}
+\Sexpr{knit_child('cap1.Rnw')}
+\Sexpr{knit_child('cap2.Rnw')}
 \Sexpr{knit_child('cap3.Rnw')}
 %\Sexpr{knit_child('test.Rnw')}
 % --------------------------------------------------------------------------------
