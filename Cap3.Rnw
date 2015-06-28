@@ -507,8 +507,7 @@ El gobierno quiere corroborar esta hipótesis y dependiendo de los resultados de
 
 \index{Tamaño de muestra}La estrategia de muestreo que se va a utilizar es la siguiente: el estimador de Horvitz-Thompson aplicado a un diseño de muestreo aleatorio simple sin reemplazo. Se selecciona una muestra piloto de tamaño 30 de la población. Para esto, una vez cargado el archivo de datos Lucy, utilizamos la función \texttt{sample} para extraer la muestra piloto. Como la característica de interés es el ingreso de las empresas, tomamos los valores de la varianza y de la media como estimaciones que servirán para el cálculo del tamaño de la muestra.
 
-<<>>=
-library(TeachingSampling)
+<<message=FALSE>>=
 data(BigLucy)
 attach(BigLucy)
 
@@ -562,7 +561,7 @@ La determinación del tamaño de muestra para esta investigación utilizando la 
 
 Primero se carga en \textsf{R} el archivo \texttt{Marco} que contiene el marco de muestreo para la selección de la muestra. Se fijan los parámetros de la función, \texttt{N} y \texttt{pik}. Esta función devuelve un vector conteniendo el índice de los elementos seleccionados en la muestra. En este caso particular, el primer elemento seleccionado es el número 7 y el último el número 2395.
 
-<<results='hide'>>= 
+<<message=FALSE>>= 
 data(BigLucy)
 attach(BigLucy)
 N <- dim(BigLucy)[1]
@@ -880,7 +879,7 @@ Primero se carga en \textsf{R} el archivo \texttt{Marco} que contiene el marco d
 library(TeachingSampling)
 @
 
-<<>>=
+<<message=FALSE>>= 
 data(BigLucy)
 N <- dim(BigLucy)[1]
 pik <- 0.025
@@ -1150,7 +1149,7 @@ Para nuestra población de ejemplo $U$, existen $\binom{N+m-1}{m}=20$ posibles m
 
 \index{Marco y Lucy}Suponga que se quiere seleccionar una muestra aleatoria simple con reemplazo de tamaño $m=400$ empresas del sector industrial. Para la selección de la muestra es posible usar la función \texttt{sample} que viene integrada con \textsf{R}. En primer lugar se debe cargar el marco de muestreo que permite la selección, identificación y posterior ubicación de cada individuo en la muestra con reemplazo. Para la selección de la muestra es necesario ingresar los parámetros de la función, en este caso \texttt{N}=2396, el tamaño poblacional, está dado por la cantidad de filas (registros de empresas del sector industrial) del marco de muestro y \texttt{m}=400 empresas que se seleccionaran con reemplazo.
 
-<<results='hide'>>=
+<<message=FALSE>>=
 data(BigLucy)
 attach(BigLucy)
 N <- dim(BigLucy)[1]
@@ -1160,7 +1159,7 @@ sam <- sample(N, m, replace=TRUE)
 
 Sin embargo, para seleccionar la muestra con reemplazo utilizando el método secuencial, el paquete \texttt{TeachingSampling} adjunta la función \texttt{S.WR} cuyos argumentos son \texttt{N}, el tamaño de la población y \texttt{m}, el tamaño de la muestra con reemplazo. El resultado de la función es un conjunto de índices (no necesariamente distintos) que aplicados a la población resulta en los valores de la característica de interés para las empresas (no necesariamente distintas) seleccionadas. Nótese que una empresa seleccionada se tendrá en cuenta en la etapa de estimación tantas veces como haya sido seleccionada.
 
-<<results='hide'>>=
+<<message=FALSE>>=
 sam <- S.WR(N,m)
 muestra <- BigLucy[sam,]
 attach(muestra)
@@ -1628,7 +1627,7 @@ Nótese que las característica de interés son Ingreso, número de empleados e 
 
 Se ha decidido que la población va a ser particionada en seis grupos, de tal forma que el tamaño efectivo de muestra será 399 o 400. El marco de muestreo es cargado en el ambiente de \textsf{R}.
 
-<<results='hide'>>= 
+<<message=FALSE>>= 
 data(BigLucy)
 attach(BigLucy)
 @
@@ -1642,7 +1641,7 @@ El procedimiento que se sigue es la creación de los grupos sistemáticos. Esto 
 
 La selección de la muestra se realiza mediante la función \texttt{S.SY} del paquete \texttt{TeachingSampling} cuyos argumentos son \texttt{N}, el tamaño de la población y \texttt{a}, el número de grupos. Esta función sigue el algoritmo secuencial descrito en esta estrategia de muestreo y lo que hace es aleatoriamente asignar un arranque aleatorio y saltar, en este caso, de seis en seis elementos hasta barrer toda la lista. El resultado de la función es un listado de índices que aplicados a la población resulta en los valores de las características de interés de los elementos incluidos en la muestra realizada.
 
-<<results='hide'>>=
+<<message=FALSE>>=
 sam <- S.SY(N, a)
 muestra <- BigLucy[sam,]
 attach(muestra)
@@ -1672,7 +1671,7 @@ Es hora de preguntarse, ¿por qué los resultados de las estimaciones son mejore
 
 En primer lugar, se realiza un análisis de varianza para obtener la des\-com\-po\-si\-ción de las sumas de cuadrados para la característica de interés \texttt{Income}. Para esto usamos la función \texttt{lm} que relaciona a la variable de interés con un factor de agrupamiento. La variable grupo fue creada como un vector de cinco niveles y puede ser usada en este caso. Aplicando la función \texttt{anova} al modelo, se obtiene una tabla de sumas de cuadrados.
 
-<<echo=FALSE, results='hide'>>= 
+<<message=FALSE>>= 
 data(BigLucy)
 attach(BigLucy)
 @
