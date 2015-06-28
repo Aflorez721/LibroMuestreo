@@ -1,13 +1,8 @@
 \documentclass[10pt]{book}
-\usepackage{alltt}
 \usepackage[utf8]{inputenc}
 \usepackage[spanish,activeacute,english]{babel}
-\usepackage[tight,spanish]{minitoc}
-\usepackage[reqno]{amsmath}
 \usepackage{amsmath,amsfonts,amssymb,amsthm,amscd,enumerate}
 \usepackage{makeidx}
-\usepackage{color}
-\usepackage{hyperref}
 \usepackage[full]{harvard}
 \makeindex
 \decimalpoint
@@ -48,6 +43,7 @@
 \numberwithin{Defi}{section}
 % --------------------------------------------------------------------------------
 \mainmatter
+\Sexpr{knit_child('portada.Rnw')}
 \Sexpr{knit_child('cap1.Rnw')}
 \Sexpr{knit_child('cap2.Rnw')}
 % --------------------------------------------------------------------------------
