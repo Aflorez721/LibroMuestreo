@@ -5,6 +5,7 @@ library(xtable)
 options(scipen = 100, digits = 4)
 set.seed(12345)
 library(knitr)
+library(plyr)
 @
 %--------------------
 \chapter[Muestreo estratificado]{Muestreo estratificado}
@@ -342,3 +343,597 @@ sam
 \end{Eje}
 
 Por supuesto, es posible utilizar la función \texttt{sample} que viene incorporada en el ambiente genérico de \textsf{R} o también es posible utilizar la función la función \texttt{S.SI} del paquete \texttt{TeachingSampling}. Sin importar el algoritmo de selección de las muestras aleatorias simples sin reemplazo, es importante notar que se han seleccionado tantas muestras como estratos existen en la población.
+
+\subsection[El estimador de Horvitz-Thompson]{El estimador de Horvitz-Thompson}
+
+La estrategia de muestreo queda definida con el uso del estimador de Horvitz-Thompson. Esta estrategia es la más conocida, aplicada y discutida en los libros de texto. Para esto, el siguiente resultado muestra la construcción de las probabilidades de inclusión.
+
+\begin{Res} Para un diseño de muestreo aleatorio estratificado, las probabilidades de inclusión de primer y segundo orden están dadas por:
+\begin{equation}
+  \pi_k = \dfrac{n_h}{N_h} \ \ \ \text{si $k\in U_h$}
+\end{equation}
+\begin{equation}
+  \pi_{kl}=\begin{cases}
+            \dfrac{n_h}{N_h}, & \text{si $k=l, k \in U_h$},\\\\
+            \dfrac{n_h}{N_h}\dfrac{n_h-1}{N_h-1}, & \text{si $k,l \in U_h$},\\\\
+            \dfrac{n_h}{N_h}\dfrac{n_i}{N_i}, & \text{si $k\in U_h, l\in U_i, i\neq h$}.
+            \end{cases}
+\end{equation}
+respectivamente. La covarianza de las variables indicadoras está dada por
+\begin{equation}
+\Delta_{kl}=\begin{cases}
+            \dfrac{n_h}{N_h}\dfrac{N_h-n_h}{N_h}, & \text{si $k=l, k \in U_h$},\\\\
+            -\dfrac{n_h}{N_h^2}\dfrac{(N_h-n_h)}{(N_h-1)}, & \text{si $k,l \in U_h$},\\\\
+            0, & \text{si $k\in U_h, l\in U_i, i\neq h$}.
+\end{cases}
+\end{equation}
+\end{Res}
+
+\begin{proof}
+Sea $k\in U_h$
+\begin{align*}
+\pi_k=Pr(k\in S)&=Pr(k\in S_h)\\
+&=Pr(I_k(S_h)=1)\\
+&=\dfrac{\binom{1}{1}\binom{N_h-1}{n_h-1}}{\binom{N_h}{n_h}}=\dfrac{n_h}{N_h}
+\end{align*}
+por otro lado, si $k,l\in U_h$
+\begin{align*}
+\pi_{kl}&=Pr(k\in S_h\text{ y }l\in S_h)\\
+&=Pr(I_k(S_h)=1|I_l(S_h)=1)Pr(I_l(S_h)=1)\\
+&=\dfrac{n_h-1}{N_h-1}\dfrac{n_h}{N_h}=\dfrac{n_h}{N_h}\dfrac{n_h-1}{N_h-1}
+\end{align*}
+
+Pero, si $k\in U_h, l\in U_i, i\neq h$, por la selección independiente en los estrato $h$ e $i$, se tiene que
+
+\begin{align*}
+\pi_{kl}&=Pr(k\in S_h\text{ y }l\in S_i)\\
+&=Pr(k\in S_h)Pr(l\in S_i)\\
+&=\dfrac{n_h}{N_h}\dfrac{n_i}{N_i}
+\end{align*}
+\end{proof}
+
+Una de las razones por las que se utiliza el diseño de muestreo es\-tra\-ti\-fi\-ca\-do es porque se desean estimativos de gran precisión en lo subgrupos. Siendo así, al aplicar un diseño EST-MAS se tiene el siguiente resultado que permite obtener estimaciones insesgadas y precisas para cada subgrupo poblacional.
+
+\begin{Res}
+Bajo un diseño de muestreo aleatorio simple sin reemplazo en el estrato $h$, un estimador insesgado del total $t_{yh}$, su varianza y su varianza estimada están dados por
+\begin{equation}
+\hat{t}_{yh,\pi}=\dfrac{N_h}{n_h}\sum_{k\in S_h}y_k
+\end{equation}
+\begin{equation}
+Var_{MAS}(\hat{t}_{yh,\pi})=\frac{N_h^2}{n_h}\left(1-\frac{n_h}{N_h}\right)S^2_{y_{U_h}}
+\end{equation}
+\begin{equation}
+\widehat{Var}_{MAS}(\hat{t}_{yh,\pi})=\frac{N_h^2}{n_h}\left(1-\frac{n_h}{N_h}\right)S^2_{y_{S_h}}
+\end{equation}
+respectivamente. En donde
+\begin{equation}
+S^2_{y_{U_h}}=\frac{1}{N_h-1}\sum_{k\in U_h}(y_k-\bar{y}_{U_h}), \ \ \ \ \quad h=1,\ldots,H.
+\end{equation}
+la \textbf{varianza poblacional} de la característica de interés en el estrato $U_h$ y con
+\begin{equation}
+S^2_{y_{S_h}}=\frac{1}{n_h-1}\sum_{k\in S_h}(y_k-\bar{y}_{S_h}), \ \ \ \ \quad h=1,\ldots,H.
+\end{equation}
+la \textbf{varianza muestral} de los valores de la característica de interés en la muestra aleatoria del estrato $S_h$. Nótese que $\hat{t}_{yh,\pi}$ es insesgado para el total $t_{yh}$ de la característica de interés $y$, y que $\widehat{Var}_{MAS}(\hat{t}_{yh,\pi})$ es insesgado para $Var_{MAS}(\hat{t}_{yh,\pi})$
+\end{Res}
+
+\begin{proof}
+Al notar que el subgrupo $U_h$ puede ser tratado como una población separada, la demostración es inmediata al seguir los lineamentos de la demostración del resultado 3.2.4.
+\end{proof}
+
+Una vez se tienen las estimaciones para los subgrupos poblacionales o estratos, se sigue que el total poblacional $t_y$ puede ser estimado usando el siguiente resultado.
+
+\begin{Res} Para un diseño de muestreo aleatorio estratificado, el estimador de Horvitz-Thompson del total poblacional $t_y$, su varianza y su varianza estimada están dados por:
+\begin{equation}
+\hat{t}_{y,\pi}=\sum_{h=1}^H\hat{t}_{yh,\pi}=\sum_{h=1}^H\dfrac{N_h}{n_h}\sum_{k\in S_h}y_k
+\end{equation}
+\begin{equation}\label{Varianza_Estratos}
+Var_{MAE}(\hat{t}_{y,\pi})=\sum_{h=1}^H\frac{N_h^2}{n_h}\left(1-\frac{n_h}{N_h}\right)S^2_{yU_h}
+\end{equation}
+\begin{equation}
+\widehat{Var}_{MAE}(\hat{t}_{y,\pi})=\sum_{h=1}^H\frac{N_h^2}{n_h}\left(1-\frac{n_h}{N_h}\right)S^2_{ys_h}
+\end{equation}
+respectivamente. Nótese que $\hat{t}_{y,\pi}$ es insesgado para el total $t_{y}$ de la característica de interés $y$, y que $\widehat{Var}_{MES}(\hat{t}_{y,\pi})$ es insesgado para $Var_{MAE}(\hat{t}_{y,\pi})$.
+\end{Res}
+
+\begin{proof}
+Dado que $\hat{t}_{yh,\pi}$ estima insesgadamente el total $t_{yh}$ del subgrupo poblacional $h$ con varianza dada por $\frac{N_h^2}{n_h}\left(1-\frac{n_h}{N_h}\right)S^2_{yU_h}$, entonces al utilizar los resultados 5.1.3. y 5.1.4 se tiene de manera inmediata la demostración.
+\end{proof}
+
+\begin{Eje}
+Para nuestra población de ejemplo $U$, existen $\binom{3}{2}\binom{2}{1}=6$ posibles muestras de tamaño $n=3$. Realice el cálculo léxico-gráfico del estimador de Horvitz-Thompson y compruebe el insesgamiento y la varianza.
+\end{Eje}
+
+\subsection{Estimación de la media poblacional}
+
+\index{Estimación de la media poblacional}Una de las formas de conocer si existen diferencias con respecto a los valores que toma la característica de interés en los diferentes estratos, es estimar la media $\bar{y}_{Uh}$ en el subgrupo $U_h$. De hecho, el diseño estratificado adquiere más validez y ganancia en precisión cuando el comportamiento promedio de la característica de interés es diferente en cada estrato.
+
+\begin{Res}
+Bajo un diseño de muestreo aleatorio simple sin reemplazo en el estrato $h$, un estimador insesgado de la media $\bar{y}_{Uh}$, su varianza y su varianza estimada están dados por
+\begin{equation}
+\hat{\bar{y}}_{Uh,\pi}=\dfrac{1}{n_h}\sum_{k\in S_h}y_k
+\end{equation}
+\begin{equation}
+Var_{MAS}(\hat{\bar{y}}_{Uh,\pi})=\frac{1}{n_h}\left(1-\frac{n_h}{N_h}\right)S^2_{yU_h}
+\end{equation}
+\begin{equation}
+\widehat{Var}_{MAS}(\hat{\bar{y}}_{Uh,\pi})=\frac{1}{n_h}\left(1-\frac{n_h}{N_h}\right)S^2_{ys_h}
+\end{equation}
+respectivamente. Nótese que $\hat{\bar{y}}_{Uh,\pi}$ es insesgado para la media del estrato $\bar{y}_{Uh}$ de la característica de interés $y$, y que $\widehat{Var}_{MAS}(\hat{\bar{y}}_{Uh,\pi})$ es insesgado para $Var_{MAS}(\hat{\bar{y}}_{Uh,\pi})$.
+\end{Res}
+
+Por el contrario del razonamiento que se tuvo en la estimación del total poblacional, \textbf{es equivocado pensar de la siguiente manera:}
+
+\begin{quote}
+    Si un estimador insesgado del total poblacional $t_y$ es la suma de cada una de las estimaciones en los $H$ estratos, entonces un estimador del promedio poblacional $\bar{y}_U$ será un promedio de los promedios estimados en los $H$ estratos.
+\end{quote}
+
+El anterior razonamiento es intuitivo pero es errado la siguiente razón:
+\begin{equation*}
+    \bar{y}_U\neq \dfrac{\bar{y}_{U_1}+\bar{y}_{U_2}+\ldots+\bar{y}_{U_H}}{H}
+\end{equation*}
+
+Es fácil verlo con nuestra población de ejemplo $U$ en donde el primer estrato $U_1$ tiene una media igual a $\bar{y}_{U_1}=67.5$, el segundo estrato $U_2$ tiene una media igual a $\bar{y}_{U_2}=33.67$. Por tanto $(\bar{y}_{U_1}+\bar{y}_{U_2})/2=50.58$ mientras que la verdadera media poblacional es $\bar{y}_{U}=47.2$.
+
+\begin{Res}
+Bajo un diseño de muestreo aleatorio simple sin reemplazo en el estrato $h$, un estimador insesgado de la media $\bar{y}_{U}$, su varianza y su varianza estimada están dados por
+\begin{equation}
+\hat{\bar{y}}_{U,\pi}=\dfrac{1}{N}\hat{t}_{y,\pi}=\frac{1}{N}\sum_{h=1}^HN_h\hat{\bar{y}}_{Uh,\pi}
+\end{equation}
+\begin{equation}
+Var_{MAE}(\hat{\bar{y}}_{U,\pi})=\dfrac{Var_{MAE}(\hat{t}_{y,\pi})}{N^2}
+=\frac{1}{N^2}\sum_{h=1}^H\frac{N_h}{n_h}\left(1-\frac{n_h}{N_h}\right)S^2_{yU_h}
+\end{equation}
+\begin{equation}
+\widehat{Var}_{MAE}(\hat{\bar{y}}_{U,\pi})=\dfrac{\widehat{Var}_{MAE}(\hat{t}_{y,\pi})}{N^2}
+=\frac{1}{N^2}\sum_{h=1}^H\frac{N_h}{n_h}\left(1-\frac{n_h}{N_h}\right)S^2_{ys_h}
+\end{equation}
+respectivamente. Nótese que $\hat{\bar{y}}_{U,\pi}$ es insesgado para la media poblacional $\bar{y}_{Uh}$ de la característica de interés $y$, y que $\widehat{Var}_{MAS}(\hat{\bar{y}}_{U,\pi})$ es insesgado para $Var_{MAE}(\hat{\bar{y}}_{U,\pi})$.
+\end{Res}
+
+\subsubsection{Intervalos de confianza}
+
+\index{Intervalo de confianza}Al respecto \citeasnoun{Loh} afirma que un intervalo de $100(1-\alpha)\%$ de confianza para la media de una población está dado por
+
+\begin{equation}
+\hat{\bar{y}}_{U,\pi}\pm Z_{1-\frac{\alpha}{2}}\sqrt{Var_{MAE}(\hat{\bar{y}}_{U,\pi})}
+\end{equation}
+
+si se cumple algunas de las siguientes condiciones
+
+\begin{itemize}
+  \item El tamaño de muestra $n_h$ en cada estrato $h$ es grande.
+  \item Existe una gran número de estratos.
+\end{itemize}
+
+Si las anteriores condiciones no pueden ser satisfechas, se prefiere utilizar el percentil de una distribución t-student con $N-H$ grados de libertad. Así, un intervalo de confianza para la media poblacional está dado por
+
+\begin{equation}
+\hat{\bar{y}}_{U,\pi}\pm t_{1-\frac{\alpha}{2},N-H}\sqrt{Var_{MAE}(\hat{\bar{y}}_{U,\pi})}
+\end{equation}
+
+\subsection{Asignación del tamaño de muestra}
+
+\index{Tamaño de muestra}Tal vez, la parte más importante en el diseño de una encuesta es la determinación del tamaño de muestra. En muestreo estratificado, bajo la restricción de que el tamaño de la muestra general es $n$ y de la existencia de $H$ estratos fijos, se quiere determinar los tamaños de muestra $n_h$ para cada estrato $h$ de tal manera que se garantice la ganancia de precisión del estimador. \citeasnoun{Leh} señalan que en investigaciones por muestreo reales, las cuales incluyen varias características de interés, es imposible lograr que la asignación de la muestra arroje ganancias en la eficiencia de manera global (para cada una de las características de interés).
+
+\subsubsection{Asignación proporcional}
+
+\index{Asignación proporcional}Se decide utilizar este tipo de asignación cuando la muestra debe ser representativa de la población de acuerdo al comportamiento de la información auxiliar. \citeasnoun{Loh} lo expresa de la siguiente manera
+
+\begin{quote}
+Al utilizar la asignación proporcional, la muestra se puede ver como una versión miniatura de la población.
+\end{quote}
+
+Si se define la \textbf{fracción de muestreo} como $f_h=n_h/N_h$ en el estrato $h$, entonces al utilizar la asignación proporcional la fracción de muestreo será la misma para todos los estratos, tal que $f_h=f$. Nótese que la probabilidad de inclusión de cualquier elemento en la población $\pi_k=f_h=f$ es constante y fija. De esta manera, cada unidad en la muestra representará el mismo número de elementos en la población, independientemente del estrato al que pertenezca.
+
+\begin{Defi}
+\index{Asignación proporcional}Un diseño de muestreo aleatorio estratificado tiene asignación proporcional si
+\begin{equation}
+\frac{n_h}{N_h}=\frac{n}{N}\ \ \ \ \ \ h=1,\ldots,H
+\end{equation}
+\end{Defi}
+
+\begin{Res}
+Para un diseño de muestreo aleatorio estratificado con asignación proporcional, el estimador de Horvitz-Thompson del total poblacional $t_y$, su varianza y su varianza estimada están dados por:
+\begin{equation}
+\hat{t}_{y,\pi}=\dfrac{N}{n}\sum_{k\in S}y_k
+\end{equation}
+\begin{equation}
+Var_{MAE}(\hat{t}_{y,\pi})=\frac{N^2}{n}\left(1-\frac{n}{N}\right)\sum_{h=1}^H \frac{n_h}{n}S^2_{yU_h}
+\end{equation}
+\begin{equation}
+\widehat{Var}_{MAE}(\hat{t}_{y,\pi})=\frac{N^2}{n}\left(1-\frac{n}{N}\right)\sum_{h=1}^H \frac{n_h}{n}S^2_{ys_h}
+\end{equation}
+\end{Res}
+\begin{proof}
+Observando la relación de la definición anterior se tiene que
+\begin{align*}
+\hat{t}_{y,\pi}&=\sum_{h=1}^H\dfrac{N_h}{n_h}\sum_{k\in S_h}y_k\\
+&=\dfrac{N}{n}\sum_{h=1}^H\sum_{k\in S_h}y_k\\
+&=\dfrac{N}{n}\sum_{k\in S}y_k
+\end{align*}
+Para las varianzas se tiene que
+\begin{align*}
+\sum_{h=1}^H\frac{N_h^2}{n_h}\left(1-\frac{n_h}{N_h}\right)S^2_{yU_h}&=\sum_{h=1}^H\frac{N_h^2}{n_h^2}\left(1-\frac{n_h}{N_h}\right)n_hS^2_{yU_h}\\
+&=\frac{N^2}{n^2}\left(1-\frac{n}{N}\right)\sum_{h=1}^Hn_hS^2_{yU_h}
+=\frac{N^2}{n}\left(1-\frac{n}{N}\right)\sum_{h=1}^H\frac{n_h}{n}S^2_{yU_h}
+\end{align*}
+\end{proof}
+
+
+\subsubsection{Asignación de Neyman}
+
+\index{Asignación de Neyman}Jerzy Neyman en su artículo de 1934, discutía el problema de la selección de una muestra mediante métodos probabilísticos versus la selección de una muestra a conveniencia. En ese artículo, él observa las grandes bondades de los dos métodos. Sin embargo, mostró que separando la población en subgrupos poblacionales que llamó estratos y tomando muestras aleatorias simples sin reemplazo, los límites del intervalo de confianza podían ser minimizados para un tamaño de muestra fijo. Este artículo fue fundamental en el uso del muestreo estratificado alrededor del mundo.
+
+Neyman trató con el problema de minimizar la varianza $Var_{MAE}(\hat{t}_{y,\pi})$ del estimador de Horvitz-Thompson fijando el tamaño de muestra general $n$. Como lo mencionan \citeasnoun{Gro}, bajo este método se producen las menores varianzas para la media muestral comparado con otras técnicas de asignación de tamaño de muestra. Para realizar esta asignación es necesario conocer los tamaños de muestra en cada estrato $n_h$ tal que $\sum_{h=1}^Hn_h=n$.
+
+\begin{Res}
+Bajo la asignación de Neyman, el tamaño de muestra que minimiza (\ref{Varianza_Estratos}) está dado por
+\begin{equation}
+n_h=n\dfrac{N_hS_{yU_h}}{\sum_{h=1}^HN_hS_{yU_h}}
+\end{equation}
+donde $S_{yU_h}=\sqrt{S_{yU_h}^2}$
+\end{Res}
+
+\begin{proof}
+La cantidad a minimizar es
+\begin{align*}
+\sum_{h=1}^H\frac{N_h^2}{n_h}\left(1-\frac{n_h}{N_h}\right)S^2_{yU_h}
+\end{align*}
+sujeta a
+\begin{align*}
+\sum_{h=1}^Hn_h=n
+\end{align*}
+La ecuación de Lagrange se escribe como
+\begin{equation}
+\mathcal{L}(n_1,\ldots,n_h,\lambda)=\sum_{h=1}^H\frac{N_h^2}{n_h}\left(1-\frac{n_h}{N_h}\right)S^2_{yU_h}-\lambda\left(n-\sum_{h=1}^Hn_h\right)
+\end{equation}
+al anular las derivadas parciales se tiene
+\begin{align}
+\frac{\partial\mathcal{L}}{\partial\lambda}&=n-\sum_{h=1}^Hn_h=0\\
+\frac{\partial\mathcal{L}}{\partial n_h}&=-\frac{N_h^2}{n_h^2}S^2_{yU_h}+\lambda=0
+\end{align}
+De (5.2.28) se tiene que
+\begin{equation}\label{Lagrange1}
+n_h=\frac{N_h}{\sqrt{\lambda}}S_{yU_h}
+\end{equation}
+Reemplazando en (5.2.27)
+\begin{align*}
+\sum_{h=1}^Hn_h=n=\frac{\sum_{h=1}^HN_hS_{yU_h}}{\sqrt{\lambda}}
+\end{align*}
+Por tanto,
+\begin{equation}
+\sqrt{\lambda}=\frac{1}{n}\sum_{h=1}^HN_hS_{yU_h}
+\end{equation}
+Por último, reemplazando en (5.2.29) se tiene que
+\begin{equation*}
+n_h=n\dfrac{N_hS_{yU_h}}{\sum_{h=1}^HN_hS_{yU_h}}
+\end{equation*}
+Es posible mostrar que la matriz de segundas derivadas parciales es definida positiva para los valores que satisfacen las restricciones. Así se concluye que lo valores de $n_h$ dados por este resultado minimizan la varianza del estimador de Horvitz-Thompson bajo un tamaño de muestra fijo.
+\end{proof}
+
+Por supuesto, es necesario conocer las varianzas de la característica de interés en cada estrato para poder utilizar este método. Con respecto a la asignación de Neyman se tienen problemas de redondeo, en este caso es recomendable redondear al entero más próximo. Sin embargo, la expresión (5.2.25) puede llevar a la situación en donde $n_h>N_h$. En este caso, se realiza un censo en el estrato en donde la anterior relación se presente y luego se restablece el cálculo de $n_h$ para los demás estratos. Cuando se realiza un censo en un estrato, debido a la asignación de Neyman, o al diseño logístico de la encuesta, ese estrato es llamado \textbf{estrato de inclusión forzosa}.
+
+Aunque utilizar este método puede guiar a ganancias en la eficiencia de la estrategia de muestreo, \citeasnoun{Gro} señalan las siguientes debilidades de la asignación de Neyman:
+
+\begin{itemize}
+  \item Al estimar proporciones no se tienen buenos resultados. Dado a que se requiere que las proporciones tengan grandes diferencia entre los estratos. En la vida práctica esta situación no se tiene en la mayoría de ocasiones.
+  \item Por construcción, este método funciona bien bajo el supuesto de que sólo existe una característica de interés. Cuando se tiene trabaja en encuesta multi-propósito no se tiene una reducción de varianza para todas las características de interés incluidas en la investigación.
+\end{itemize}
+
+\subsubsection{Asignación óptima}
+
+\index{Asignación óptima}Este es un método más general que la asignación de Neyman. Si al interior de algún estrato, existe una gran variabilidad, el anterior método de asignación induce un mayor tamaño de muestra en el estrato. Como lo expresa \citeasnoun{Loh} en el sector empresarial, por ejemplo, las ventas de las compañías grandes tienen un mucho mayor dispersión que las ventas de las micro-empresas.
+
+Sin embargo si, como en la mayoría de situaciones prácticas, se cuenta con recursos económicos limitados para la realización del estudio. Y dado un capital, se quiere minimizar la varianza de la estrategia de muestreo, se debe realizar otro tipo de asignación. Por lo tanto definiendo la siguiente función de costos
+
+\begin{equation}
+C=\sum_{h=1}^Hn_hC_h
+\end{equation}
+
+En donde $C_h$ es el costo de obtener la información para las características de interés de un elemento seleccionado y perteneciente al estrato $h$ y $C$ es el costo total de la realización del estudio. Luego, si se quiere distribuir la selección de elemento entre los estratos dado un costo fijo $C$, de manera que se minimice la varianza del estimador de Horvitz-Thompson, se debe utilizar la asignación óptima.
+
+\begin{Res}
+Bajo la asignación óptima, el tamaño de muestra que minimiza la función de coste está dado por
+\begin{equation}
+n_h=\dfrac{C}{\sqrt{c_h}}\frac{N_hS_{yU_h}}{\sum_{i=1}^HN_i\sqrt{c_i}S_{yU_i}}
+\end{equation}
+\end{Res}
+
+\begin{proof}
+Resulta inmediata al utilizar un razonamiento similar a la demostración del resultado de la asignación de Neyman. Es posible mostrar que la matriz de segundas derivadas parciales es definida positiva para los valores que satisfacen las restricciones. Así se concluye que lo valores de $n_h$ dados por este resultado minimizan la varianza del estimador de Horvitz-Thompson bajo un coste fijo.
+\end{proof}
+
+La expresión de la asignación óptima lleva a las siguientes conclusiones. En un determinado estrato, se debe seleccionar una muestra de tamaño grande sí:
+
+\begin{itemize}
+  \item El tamaño del estrato $N_h$ es grande y la recolección de la información en el estrato es más barata.
+  \item El estrato tiene una gran dispersión con respecto a la característica de estudio. En este caso, se extrae una muestra más grande para compensar la heterogeneidad dentro del estrato.
+\end{itemize}
+
+
+\subsection{Estimación en dominios}
+
+\index{Estimación en dominios}La estimación por dominios se caracteriza por el desconocimiento de la pertenencia de las unidades poblacionales al dominio. Es decir, para conocer cuáles unidades de la población pertenecen al dominio, es necesario realizar el proceso de medición. Sin embargo, existe un símil entre los estratos y los dominios y es que los dos dividen la población en subgrupos poblacionales. Por un lado, mientras que el conocimiento a priori de la pertenencia de los elementos poblacionales a los estratos ayuda a mejorar la eficiencia de la estimación en la etapa de diseño de la encuesta. Por otro lado, el precio que se debe pagar por el desconocimiento de la pertenencia de los elementos poblacionales a los dominios resulta alto.
+
+Uno de los propósitos del diseño de muestreo estratificado es reducir la varianza de las estimaciones para la característica de interés. Esto se cumple en el caso en donde el comportamiento de la característica de interés (como se verá en las próximas secciones) toma valores promedio distintos en cada estrato. Sin embargo, en la estimación de proporciones para dominios no se garantiza que la anterior regal se cumpla.
+
+Ahora, al multiplicar la variable de pertenencia al dominio $z_{dk}$ dada por (3.2.22) por el valor de la característica de interés $y_k$, se crea una nueva variable $y_{dk}$ dada por $y_{dk}=z_{dk}y_k$, y una vez construida se utilizan los principios del estimador de Horvitz-Thompson para hallar un estimador insesgado del total de la característica de interés en el dominio $U_d$, el tamaño absoluto del dominio y la media de la característica en el dominio. Por supuesto, antes de obtener las estimaciones a nivel poblacional, es necesario aunque no suficiente, obtener las estimaciones de los dominios en los estratos.
+
+\subsubsection{Estimación del total en un dominio}
+\index{Estimación en dominios}
+\begin{Res}
+Bajo muestreo aleatorio estratificado, el estimador de Horvitz-Thompson para el total del dominio $t_{yhd}$ en el estrato $h$, su varianza y su varianza estimada están dados por
+\begin{equation}
+\hat{t}_{yhd,\pi}=\frac{N_h}{n_h}\sum_{S_h}y_{hdk}
+\end{equation}
+\begin{equation}
+Var(\hat{t}_{yhd,\pi})=\frac{N_h^2}{n_h}\left(1-\frac{n_h}{N_h}\right)S^2_{y_{dU_h}}
+\end{equation}
+\begin{equation}
+\widehat{Var}(\hat{t}_{yhd,\pi})=\frac{N_h^2}{n_h}\left(1-\frac{n_h}{N_h}\right)S^2_{y_{ds_h}}
+\end{equation}
+respectivamente. $y_{hdk}$ es el valor de la nueva característica $y_{dk}$ en el $h$-ésimo estrato. $S^2_{y_{dU_h}}$ y $S^2_{y_{ds_h}}$ denotan el estimador de la varianza de los valores de la característica de interés $y_{dk}$ en el estrato $U_h$ y en la muestra $s_h$ seleccionada de dicho estrato, respectivamente.
+\end{Res}
+
+\begin{Res}
+Bajo muestreo aleatorio estratificado, el estimador de Horvitz-Thompson para el total del dominio $t_{yd}$ en la población, su varianza y su varianza estimada están dados por
+\begin{equation}
+\hat{t}_{yd,\pi}=\sum_{h=1}^H\frac{N_h}{n_h}\sum_{S_h}y_{hdk}
+\end{equation}
+\begin{equation}
+Var(\hat{t}_{yd,\pi})=\sum_{h=1}^H\frac{N_h^2}{n_h}\left(1-\frac{n_h}{N_h}\right)S^2_{y_{dU_h}}
+\end{equation}
+\begin{equation}
+\widehat{Var}(\hat{t}_{yd,\pi})=\sum_{h=1}^H\frac{N_h^2}{n_h}\left(1-\frac{n_h}{N_h}\right)S^2_{y_{ds_h}}
+\end{equation}
+\end{Res}
+
+Nótese que en la expresión $S^2_{y_{dU_h}}$ los valores que intervienen son: los de la característica de interés, si el elemento pertenece al dominio, y ceros si el elemento no pertenece al dominio, lo mismo sucede con $S^2_{y_{ds_h}}$. Por tanto, las anteriores expresiones de varianza van a tomar valores grandes por la inclusión de los ceros; éste es el precio que se debe pagar por el desconocimiento de la pertenencia de los elementos a los dominios.
+
+\subsubsection{Estimación de la media de un dominio}
+\index{Estimación en dominios}
+\begin{Res}
+Bajo muestreo aleatorio estratificado, el estimador de Horvitz-Thompson para la media de la característica de interés en un dominio $\bar{y}_{dU_h}$ en el estrato $h$, su varianza y su varianza estimada están dados por
+\begin{equation}
+\hat{\bar{y}}_{dU_h,\pi}=\frac{\hat{t}_{yhd,\pi}}{N_{hd}}
+\end{equation}
+\begin{equation}
+Var(\hat{\bar{y}}_{dU_h,\pi})=\frac{1}{N_{hd}^2}Var(\hat{t}_{yhd,\pi})
+\end{equation}
+\begin{equation}
+\widehat{Var}(\hat{\bar{y}}_{dU_h,\pi})=\frac{1}{N_{hd}^2}\widehat{Var}(\hat{t}_{yhd,\pi})
+\end{equation}
+\end{Res}
+
+\begin{Res}
+Bajo muestreo aleatorio estratificado, el estimador de Horvitz-Thompson para la media de la característica de interés en un dominio $\bar{y}_{d}$ en la población, su varianza y su varianza estimada están dados por
+\begin{equation}
+\hat{\bar{y}}_{d,\pi}=\frac{\hat{t}_{yd,\pi}}{N_{d}}
+\end{equation}
+\begin{equation}
+Var(\hat{\bar{y}}_{d,\pi})=\frac{1}{N_{d}^2}Var(\hat{t}_{yd,\pi})
+\end{equation}
+\begin{equation}
+\widehat{Var}(\hat{\bar{y}}_{d,\pi})=\frac{1}{N_{d}^2}\widehat{Var}(\hat{t}_{yd,\pi})
+\end{equation}
+\end{Res}
+
+Para poder utilizar los anteriores resultados, es necesario conocer de antemano el valor del tamaño absoluto del dominio en cada estrato $N_{hd}$ y el valor del tamaño absoluto del dominio en la población $N_d$.
+
+\subsubsection{Estimación del tamaño absoluto de un dominio}
+\index{Estimación en dominios}
+\begin{Res}
+Bajo muestreo aleatorio estratificado, el estimador de Horvitz-Thompson para el tamaño absoluto de un dominio $N_{hd}$ en el estrato $h$, su varianza y su varianza estimada están dados por
+\begin{equation}
+\hat{N}_{hd,\pi}=\frac{N_h}{n_h}\sum_{S_h}z_{dk}
+\end{equation}
+\begin{equation}
+Var(\hat{N}_{hd,\pi})=\frac{N_h^2}{n_h}\left(1-\frac{n_h}{N_h}\right)S^2_{z_{dU_h}}
+\end{equation}
+\begin{equation}
+\widehat{Var}(\hat{N}_{hd,\pi})=\frac{N_h^2}{n_h}\left(1-\frac{n_h}{N_h}\right)S^2_{z_{ds_h}}
+\end{equation}
+respectivamente, con $S^2_{z_{dU_h}}$ y $S^2_{z_{ds_h}}$ el estimador de la varianza de los va\-lo\-res de la característica de interés $z_{dk}$ en el estrato $U_h$ y en la muestra $s_h$ seleccionada de dicho estrato.
+\end{Res}
+
+\begin{Res}
+Bajo muestreo aleatorio estratificado, el estimador de Horvitz-Thompson para el tamaño absoluto de un dominio $N_d$ en la población, su varianza y su varianza estimada están dados por
+\begin{equation}
+\hat{N}_{d,\pi}=\sum_{h=1}^H\frac{N_h}{n_h}\sum_{S_h}z_{dk}
+\end{equation}
+\begin{equation}
+Var(\hat{N}_{d,\pi})=\sum_{h=1}^H\frac{N_h^2}{n_h}\left(1-\frac{n_h}{N_h}\right)S^2_{z_{dU_h}}
+\end{equation}
+\begin{equation}
+\widehat{Var}(\hat{N}_{d,\pi})=\sum_{h=1}^H\frac{N_h^2}{n_h}\left(1-\frac{n_h}{N_h}\right)S^2_{z_{ds_h}}
+\end{equation}
+respectivamente.
+\end{Res}
+
+Nótese que en la expresión $S^2_{z_{dU_h}}$ los valores que intervienen son unos, si el elemento pertenece al dominio $U_d$, y ceros si el elemento no pertenece al dominio, lo mismo sucede con $S^2_{y_ds}$.
+
+\subsubsection{Estimación del tamaño relativo de un dominio}
+\index{Estimación en dominios}
+\begin{Res}
+Bajo muestreo aleatorio estratificado, el estimador de Horvitz-Thompson para el tamaño relativo de un dominio $P_{hd}$ en el estrato $h$, su varianza y su varianza estimada están dados por
+\begin{equation}
+\hat{P}_{hd,\pi}=\frac{1}{N_h}\hat{N}_{hd,\pi}=\frac{1}{n_h}\sum_{S_h}z_{dk}=\frac{n_{hd}}{n_h}
+\end{equation}
+\begin{equation}
+Var(\hat{P}_{hd,\pi})=\frac{1}{n_h}\left(1-\frac{n_h}{N_h}\right)S^2_{z_{dU_h}}
+\end{equation}
+\begin{equation}
+\widehat{Var}(\hat{P}_{hd,\pi})=\frac{1}{n_h}\left(1-\frac{n_h}{N_h}\right)S^2_{z_{ds_h}}
+\end{equation}
+\end{Res}
+
+\begin{Res}
+Bajo muestreo aleatorio estratificado, el estimador de Horvitz-Thompson para el tamaño relativo de un dominio $P_{d}$ en la población, su varianza y su varianza estimada están dados por
+\begin{equation}
+\hat{P}_{d,\pi}=\frac{\hat{N}_{d,\pi}}{N}=\frac{1}{N}\sum_{h=1}\frac{N_h}{n_h}\sum_{S_h}z_{dk}
+\end{equation}
+\begin{equation}
+Var(\hat{P}_{d,\pi})=\frac{1}{N^2}\sum_{h=1}^H\frac{N_h^2}{n_h}\left(1-\frac{n_h}{N_h}\right)S^2_{z_{dU_h}}
+\end{equation}
+\begin{equation}
+\widehat{Var}(\hat{P}_{d,\pi})=\frac{1}{N^2}\sum_{h=1}^H\frac{N_h^2}{n_h}\left(1-\frac{n_h}{N_h}\right)S^2_{z_{ds_h}}
+\end{equation}
+\end{Res}
+
+\subsection{El efecto de diseño}
+
+\index{Efecto de diseño}\citeasnoun{Leh} plantean que la eficiencia del diseño de muestreo es\-tra\-ti\-fi\-ca\-do depende fuertemente de la proporción de variación total en cada estrato. Es decir, utilizando los resultados del análisis de varianza, tenemos el siguiente resultado:
+
+\begin{Res}
+Suponga que la población se divide en $h$ grupos, de tal forma que existen $N_h$ elementos por grupo y el tamaño poblacional toma la forma $N=\sum_{h=1}^H$, entonces
+\begin{equation}
+    (N-1)S^2_{y_U}=\underbrace{\sum_U\left(y_k-\bar{y}_U\right)^2}_{SCT}=\underbrace{\sum_{h=1}^H\sum_{U_h}\left(y_{hk}-\bar{y}_{U_h}\right)^2}_{SCD}+
+    \underbrace{\sum_{h=1}^HN_h\left(\bar{y}_{U_h}-\bar{y}_U\right)^2}_{SCE}
+\end{equation}
+\end{Res}
+
+Empíricamente observando la construcción de la varianza del estimador de Horvitz-Thompson en la ecuación (5.2.11) se puede inferir que para te\-ner una varianza pequeña, la variación al interior de los estratos debe ser pequeña. Es decir, los estratos deben ser homogéneos por dentro. Cada esquema de asignación de muestras arroja resultados diferentes en cuanto a la eficiencia se refiere. En esta sección se considera el esquema de asignación de muestra proporcional dado por la definición 5.2.2. en donde la varianza del estimador de Horvitz-Thompson está dada por la siguiente expresión:
+
+\begin{equation}
+Var_{MAE}(\hat{t}_{y,\pi})=\frac{N^2}{n}\left(1-\frac{n}{N}\right)\sum_{h=1}^H W_hS^2_{yU_h}
+\end{equation}
+
+donde $S^2_{yU_h}$ es la varianza de la característica de interés en el estrato $h$ y $W_h=\frac{n_h}{n}\frac{N_h}{N}$. Con un poco de álgebra se llega al siguiente resultado.
+
+\begin{Res}
+Bajo un diseño de muestreo aleatorio simple sin reemplazo con asignación proporcional, la varianza del estimador de Horvitz-Thompson toma la siguiente forma
+\begin{equation}
+Var_{MAS}(\hat{t}_{y,\pi})\cong\frac{N^2}{n}\left(1-\frac{n}{N}\right)\sum_{h=1}^H W_h\left[S^2_{yU_h}+(\bar{y}_{U_h}-\bar{y}_U)^2\right]
+\end{equation}
+\end{Res}
+
+\begin{proof}
+\begin{align}
+(N-1)S^2_{yU_h}&=\sum_U(y_k-\bar{y}_U)^2\\
+&=\sum_{h=1}^H\sum_U(y_{hk}-\bar{y}_U)^2\\
+&=\sum_{h=1}^H\sum_{U_h}\left(y_{hk}-\bar{y}_{U_h}\right)^2+\sum_{h=1}^HN_h\left(\bar{y}_{U_h}-\bar{y}_U\right)^2\\
+&=\sum_{h=1}^H(N_h-1)S^2_{yU_h}+\sum_{h=1}^HN_h\left(\bar{y}_{U_h}-\bar{y}_U\right)^2
+\end{align}
+
+Por tanto
+
+\begin{align}
+S^2_{yU_h}&\cong\sum_{h=1}^H\frac{N_h}{N}\left[S^2_{yU_h}+\left(\bar{y}_{U_h}-\bar{y}_U\right)^2\right]\\
+&=\frac{N^2}{n}\left(1-\frac{n}{N}\right)\sum_{h=1}^H W_h\left[S^2_{yU_h}+(\bar{y}_{U_h}-\bar{y}_U)^2\right]
+\end{align}
+\end{proof}
+
+\begin{Res}
+El efecto de diseño en el muestreo aleatorio simple sin reemplazo con asignación proporcional está dado por
+\begin{align}
+Deff&\cong\dfrac{\sum_{h=1}^H W_hS^2_{yU_h}}{\sum_{h=1}^H W_h\left[S^2_{yU_h}+(\bar{y}_{U_h}-\bar{y}_U)^2\right]}\\\\
+&\cong\frac{\text{Varianza dentro de los estratos}}{\text{Varianza Total}}
+\end{align}
+\end{Res}
+
+Ahora, intuitivamente tenemos que
+
+\begin{center}
+    \textbf{Varianza Total = Varianza dentro + Varianza entre}
+\end{center}
+
+Por tanto se concluye que, casi siempre, esta estrategia de muestreo arrojará mejores resultados que una estrategia aleatoria simple.
+
+
+\subsection{Marco y Lucy}
+
+\index{Marco y Lucy}En investigaciones anteriores (que no ha utilizado información auxiliar), el go\-bier\-no ha establecido que la característica SPAM no es un motor de desarrollo, en cuanto a ingreso neto se refiere, en las empresas del sector industrial. Lo anterior puede obedecer a razones de tipo gerencial o a la cultura organizacional de las empresas en el sector. Por supuesto, el \emph{modus operandi} del gerente de marca y las estrategias de posicionamiento de marca en el mercado varían de acuerdo a la productividad y tamaño de la empresa. De hecho, no es posible, por cuestiones financieras y logísticas, que una empresa de muy baja productividad utilice los medios publicitarios que una empresa de alto nivel pueda utilizar. Las empresas de alto nivel han dispuesto una parte de sus ganancias en la reinversión publicitaria en medios masivos de comunicación. Las empresas de bajo nivel no pueden hacer esto porque sus márgenes de ganancia no se prestan para pautar en esta clase de medios.
+
+Por lo anterior, cada estrategia de mercadeo es diferente, entre otras, porque cada cliente de cada empresa es diferente de acuerdo al nivel de productividad en el sector industrial. Es decir, los clientes de las empresas grandes son clientes que se caracterizan porque realizan pedidos de varios millones de dólares, y los clientes de las empresas pequeñas se caracterizan por ser empresas emergentes y, en algunos casos, personas naturales independientes, por tanto el margen de ganancias en cada nivel del sector empresarial es muy distinto.
+
+Sin embargo, independientemente del tipo de cliente e incluso del nivel de la empresa en el sector industrial, existe una herramienta que todas las empresas en el sector industrial pueden utilizar: el envío de publicidad directa mediante el uso del correo electrónico. Por supuesto, en países no desarrollados, en las empresas pequeñas, una vez más ya sea por el tipo de gerencia o cultura organizacional o incluso por cuestiones financieras, no existe la infraestructura ni la capacitación para establecer este tipo de publicidad no convencional.
+
+Bajo estos antecedentes, el gobierno está dispuesto a brindar planes de financiamiento a todas las empresas del sector industrial, por lo que ha planeado una nueva investigación acerca de los hábitos y usos del SPAM en las empresas del sector industrial para observar el desarrollo que el sector ha tenido gracias a este medio. La figura 5.1. muestra el comportamiento de las tres características de interés para el gobierno. Se nota que existe una mayor variabilidad en las empresas que pertenecen al nivel \textbf{Grande}, mientras que la variabilidad en los niveles \textbf{Mediano} y \textbf{Pequeño} es menor. Más aún, el comportamiento promedio de las variables de interés es distinto en cada estrato. Esto implica que utilizar un diseño de muestreo aleatorio estratificado sería una buena decisión si se quiere ganar en precisión.
+
+\begin{figure}[!h]
+<<message=FALSE>>=
+data(BigLucy)
+attach(BigLucy)
+
+par(mfrow = c(2, 2))
+boxplot(Income ~ Level, main = "Boxplot para Income")
+boxplot(Taxes ~ Level, main = "Boxplot para Taxes")
+boxplot(Employees ~ Level, main = "Boxplot para Employees")
+boxplot(Years ~ Level, main = "Boxplot para Years")
+@
+\caption{\emph{Boxplot de las características de interés en cada nivel industrial.}}
+\label{F5.1}
+\end{figure}
+
+Por supuesto, el gobierno ha creado un plan de políticas con la promesa de beneficiar al electorado. Si el gobierno corrobora la hipótesis, por medio del presente estudio, de la influencia del SPAM en el crecimiento del algún nivel del sector industrial, entonces buscará planes de capacitación y financiamiento para que las empresas de los niveles \textbf{Mediano} y \textbf{Pequeño} crezcan, se estabilicen y fomenten la creación de nuevos empleos y el tributo a las entidades gubernamentales pertinentes y, que las empresas del nivel \textbf{Grande} no desciendan de nivel sino que se expandan no sólo nacionalmente sino que también en el ámbito internacional a donde también puede llegar la publicidad SPAM en cuestión de micro segundos.
+
+Para esta nueva investigación, el gobierno ha proveído un marco de muestreo que además de contener la ubicación y la identificación de todas las empresas de todos lo niveles industriales, también adjunta el tipo de empresa, a saber: \textbf{Grande, Media, Pequeña}. El tipo de empresa será tomada como variable de estratificación para el diseño del plan muestral.
+
+\subsubsection{Estimación del tamaño de muestra}
+\index{Tamaño de muestra}
+El gobierno está decidido en implementar un plan de capacitación a las empresas del sector industrial y ha pedido que el diseño de muestreo sea re\-pre\-sen\-ta\-ti\-vo de la población en cuanto a la característica de estratificación: Nivel. Para la selección de la muestra, se debe cargar el marco de muestreo en el ambiente de \textsf{R}. Con la variable de estratificación Nivel se determinan los tamaños de cada uno de las estratos que se debe convertir en un vector de tamaño $H=3$, así \texttt{N <- c(N1,N2,N3)}, lo mismo se debe hacer con los tamaños de muestra en cada estrato, se deben convertir en vector así \texttt{n <- c(n1,n2,n3)}.
+
+<<message=FALSE>>=
+data(BigLucy)
+attach(BigLucy)
+
+N1 <- summary(Level)[[1]]
+N2 <- summary(Level)[[2]]
+N3 <- summary(Level)[[3]]
+N <- c(N1,N2,N3)
+N
+
+n1 <- round(2000 * N1/sum(N))
+n2 <- round(2000 * N2/sum(N))
+n3 <- round(2000 * N3/sum(N))
+n <- c(n1,n2,n3)
+n
+@
+
+Teniendo en ceunta que se planea utilizar la asignación proporcional para la estimación del tamaño de muestra y que se requieren $n=2000$ encuestas, se tiene que $f=\frac{2000}{85296}=0.02345$. Esto implica la realización de $n_1=$ \Sexpr{n[1]} encuestas de empresas grandes, $n_2=$ \Sexpr{n[2]} encuestas en empresas medianas y $n_3=$ \Sexpr{n[3]} encuestas en empresas pequeñas.
+
+Utilizando la función \texttt{S.STSI} del paquete \texttt{TeachingSampling} es posible seleccionar una muestra aleatoria simple en cada uno de los tres estratos. Esta función consta de tres argumentos. El primero: \texttt{Estrato}, es la variable de estratificación que indica la pertenencia de todos y cada uno de los $\sum_{h=1}^HN_h=N$ individuos de la población. El segundo argumento: \texttt{N}, un vector de tamaño $H$ que indica los tamaños de cada estrato en la población. El último argumento: \texttt{n}, un vector de tamaño $H$ que indica los tamaños de muestra en cada estrato. El resultado de la función es un conjunto de índices que, aplicados a la población, permite la obtención de la muestra estratificada.
+
+<<message=FALSE>>=
+sam <- S.STSI(Level, N, n)
+muestra <- BigLucy[sam,]
+attach(muestra)
+head(muestra)
+@
+
+La muestra realizada (seleccionada) es de tamaño 400 y está dividida en cada uno de los tres estratos. Una vez que la selección de los elementos es efectuada, se necesita obtener la información mediante una encuesta a cada una de las empresas del sector industrial. Nótese que en este punto, la realización de un muestreo estratificado tiene ventajas logísticas. Lo an\-te\-rior es evidente cuando se decide que el cuestionario será enviado vía correo electrónico a cada una de las 14 empresas del nivel \textbf{Grande}. Por tanto, la realización de esta entrevista arroja ventajas financieras enormes pues el envío de un correo electrónico no supone mayor gasto. Para la realización de la encuesta en el nivel \textbf{Mediano} se ha decidido contratar a una agencia de correos postales y, de esa forma, hacer llegar mediante correo certificado un cuestionario con la respectiva encuesta. No se aplica el mismo medio logístico que en las empresas grandes pues se sabe que no todas las empresas medianas tienen una dirección de correo electrónico actualizada, lo que no sucede en el estrato grande. Para obtener la información del sector industrial se ha decidido enviar encuestadores entrenados para el trabajo. Lo anterior se hace dado que los propietarios de las empresas pequeñas son reacios a responder las cartas certificadas y mucho menos responden el correo electrónico dado que tienen compromisos operativos que atender.
+
+Una vez conseguida la información de cada una de las 400 empresas seleccionadas, se procede a estimar las cantidades de interés. Para esto se utiliza la función \texttt{E.STSI} del paquete \texttt{TeachingSampling}. Esta función consta de cuatro parámetros muestrales, a saber: \texttt{Estrato}, es la variable de estratificación que indica la pertenencia de todos y cada uno de los $\sum_{h=1}^Hn_h=n$ individuos seleccionados en la muestra, \texttt{N} y \texttt{n}, los vectores del tamaño de la población y muestra estratificada respectivamente y \texttt{estima} conteniendo el valor de la(s) característica(s) de interés en cada uno de los elementos seleccionados.
+
+<<message=FALSE, results='hide'>>= 
+estima <- data.frame(Income, Employees, Taxes)
+E.STSI(Level, N, n, estima)
+@
+
+La función \texttt{E.STSI} arroja la estimación de cada una de las características de interés discriminada por cada estrato y el gran total así como también la varianza estimada y el coeficiente de variación estimado. Nótese que en cuestión de ingreso, se estima que el estrato grande produce un 10\%, el estrato mediano un 47\% y el estrato pequeño un 43\% del ingreso neto del sector industrial. Un resultado similar se observa con las restantes características de interés. Nótese que los coeficientes de variación estimados en cada estrato son, en algunos casos elevados\footnote{El coeficiente de variación es más alto a medida que las estimaciones estén más discriminadas en grupos.}; sin embargo, el coeficiente de variación para el total es bajo.
+
+En la siguiente tabla se muestran los resultados particulares para este ejercicio. Se puede notar que la estratificación arroja buenos resultados con coeficientes de variación menores a los que arrojaría una muestra aleatoria simple. Esto se debe a que las variables de interés presentan, en promedio, un comportamiento diferente en cada estrato.
+
+<<echo = FALSE, results = 'asis'>>=
+Estimaciones = E.STSI(Level, N, n, estima)
+T5.1 <- xtable(Estimaciones[,,"N"], caption ="\\emph{Muestreo aleatorio estratificado: estimación del tamaño de los estratos y de la población.}", label ="T5.1")
+print(T5.1, caption.placement="bottom")
+@
+
+<<echo = FALSE, results = 'asis'>>=
+Estimaciones = E.STSI(Level, N, n, estima)
+T5.2 <- xtable(Estimaciones[,,"Income"], caption ="\\emph{Muestreo aleatorio estratificado: estimación del total de la característica \\texttt{Income} para cada uno de los estratos y para la población.}", label ="T5.2")
+print(T5.2, caption.placement="bottom")
+@
+
+<<echo = FALSE, results = 'asis'>>=
+Estimaciones = E.STSI(Level, N, n, estima)
+T5.3 <- xtable(Estimaciones[,,"Employees"], caption ="\\emph{Muestreo aleatorio estratificado: estimación del total de la característica \\texttt{Employees} para cada uno de los estratos y para la población.}", label ="T5.3")
+print(T5.3, caption.placement="bottom")
+@
+
+<<echo = FALSE, results = 'asis'>>=
+Estimaciones = E.STSI(Level, N, n, estima)
+T5.4 <- xtable(Estimaciones[,,"Taxes"], caption ="\\emph{Muestreo aleatorio estratificado: estimación del total de la característica \\texttt{Taxes} para cada uno de los estratos y para la población.}", label ="T5.4")
+print(T5.4, caption.placement="bottom")
+@

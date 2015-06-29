@@ -19,7 +19,7 @@ knit_theme$set("acid")
 
 Cuando el marco de muestreo disponible para la selección de la muestra es una lista conteniendo la identificación y la ubicación de los ele\-mentos en la población, se utilizan diseños de muestreo que permitan la inclusión de éstos en la muestra de forma directa. Es decir, en la selección de la muestra, los elementos poblacionales son las mismas unidades de muestreo. Una vez que el procedimiento de muestreo ha seleccionado la muestra de elemento, el siguiente paso a realizar es la medición de la característica de interés $y_k$ en cada elemento de la muestra seleccionada ($k \in s$).
 
-En este capítulo se describen los diseños de muestreo para elementos más importantes, algunos de los cuales son ampliamente utilizados en la práctica, otros tienen la característica de ser de tamaño de muestra va\-ria\-ble o aleatorio. Cuando el marco de muestreo contiene información auxiliar de tipo continuo para cada ele\-mento de la población, se utilizará esta información en la selección de la muestra, induciendo los diseños proporcionales al tamaño. Cuando el marco de muestreo contiene información auxiliar discreta, se utilizarán diseños de muestra estratificados que permiten, a menudo, mayor precisión cuando la característica de interés presenta comportamientos diferentes en cada estrato o grupo poblacional.
+En este capítulo se describen los diseños de muestreo para elementos más importantes, algunos de los cuales son ampliamente utilizados en la práctica, otros tienen la característica de ser de tamaño de muestra variable o aleatorio. Cuando el marco de muestreo contiene información auxiliar de tipo continuo para cada ele\-mento de la población, se utilizará esta información en la selección de la muestra, induciendo los diseños proporcionales al tamaño. Cuando el marco de muestreo contiene información auxiliar discreta, se utilizarán diseños de muestra estratificados que permiten, a menudo, mayor precisión cuando la característica de interés presenta comportamientos diferentes en cada estrato o grupo poblacional.
 
 Para cada diseño de muestreo se realiza una descripción teórica, se utilizará la población $U$ para realizar algunos ejercicios léxico-gráficos que describan el comportamiento de la estrategia de muestreo. Por otro lado, se utilizará la población Lucy y, con ayuda del paquete \texttt{TeachingSampling}, se seleccionará una única muestra para la posterior estimación de los parámetros de interés. También habrá ejemplos prácticos de la vida real que permiten una mayor comprensión de las características del diseño y un mayor conocimiento a la hora de decidir qué diseño de muestreo debe see implementado en determinados casos.
 
@@ -588,7 +588,7 @@ E.SI(N,n,estima)
 <<echo = FALSE, results = 'asis'>>=
 Estimaciones = E.SI(N,n,estima)
 T3.2 <- xtable(Estimaciones, caption ="\\emph{Estimaciones para el diseño de muestreo aleatorio simpole sin reemplazo}", label ="T3.2")
-print(T3.2, caption.placement="top")
+print(T3.2, caption.placement="bottom")
 @
 
 La tabla \ref{T3.2} muestra los resultados obtenidos para este caso particular. Nótese que se obtienen mejores resultados que al utilizar un diseño de muestreo Bernoulli. Sin embargo, comparar estos resultados de ingreso total en el sector industrial con el de las mediciones pasadas, no es suficiente y se desea tener estimaciones para el dominio o subgrupo de las empresas que utilizan el envío de SPAM como estrategia publicitaria.
@@ -632,13 +632,13 @@ Como $N_d$ es desconocido, podemos utilizar el estimador alternativo dado por la
 <<echo = FALSE, results = 'asis'>>=
 Estimaciones = E.SI(N,n,SPAM.no)
 T3.3 <- xtable(Estimaciones, caption ="\\emph{Estimaciones para el diseño de muestreo aleatorio simple en el dominio que no envía SPAM}", label ="T3.3")
-print(T3.3, caption.placement="top")
+print(T3.3, caption.placement="bottom")
 @
 
 <<echo = FALSE, results = 'asis'>>=
 Estimaciones = E.SI(N,n,SPAM.si)
 T3.4 <- xtable(Estimaciones, caption ="\\emph{Estimaciones para el diseño de muestreo aleatorio simple en el dominio que sí envía SPAM}", label ="T3.4")
-print(T3.4, caption.placement="top")
+print(T3.4, caption.placement="bottom")
 @
 
 \subsection{Probabilidades de inclusión en unidades de muestreo}
@@ -904,7 +904,7 @@ E.BE(estima,pik)
 <<echo = FALSE, results = 'asis'>>=
 Estimaciones = E.BE(estima,pik)
 T3.1 <- xtable(Estimaciones, caption ="\\emph{Estimaciones para el diseño de muestreo Bernoulli}", label ="T3.1")
-print(T3.1, caption.placement="top")
+print(T3.1, caption.placement="bottom")
 @
 
 La tabla \ref{T3.1} muestra los resultados obtenidos para este caso particular, donde la desviación relativa de una estimación, medida en porcentaje está definida como
@@ -1186,7 +1186,7 @@ La tabla \ref{3.5}. muestra los resultados particulares de esta estrategia de mu
 <<echo = FALSE, results = 'asis'>>=
 Estimaciones = E.WR(N,m,estima)
 T3.5 <- xtable(Estimaciones, caption ="\\emph{Estimaciones para el diseño de muestreo aleatorio simple con reemplazo}", label ="T3.5")
-print(T3.5, caption.placement="top")
+print(T3.5, caption.placement="bottom")
 @
 
 \subsubsection{El efecto de diseño}
@@ -1664,7 +1664,7 @@ Los resultados de la estimación se muestran en la tabla \ref{T3.6}. Es de consi
 <<echo = FALSE, results = 'asis'>>=
 Estimaciones = E.SY(N, a, estima)
 T3.6 <- xtable(Estimaciones, caption ="\\emph{Estimaciones para el diseño de muestreo sistemático}", label ="T3.6")
-print(T3.6, caption.placement="top")
+print(T3.6, caption.placement="bottom")
 @
 
 Es hora de preguntarse, ¿por qué los resultados de las estimaciones son mejores que en otro tipo de estrategias de muestreo? Vamos a realizar un procedimiento de evaluación, puramente académico, y vamos a suponer que tenemos acceso a la información de la característica de interés a nivel poblacional.
