@@ -1,7 +1,8 @@
 \documentclass[10pt]{book}
+\usepackage{hyperref}
 \usepackage[utf8]{inputenc}
 \usepackage[spanish,activeacute,english]{babel}
-\usepackage{amsmath,amsfonts,amssymb,amsthm,amscd,enumerate}
+\usepackage{amsmath,amsfonts,amssymb,amsthm,amscd,enumerate, mathtools}
 \usepackage{makeidx}
 \usepackage[full]{harvard}
 \makeindex

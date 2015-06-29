@@ -86,10 +86,10 @@ Nótese que si el tamaño de muestra en cada estrato es igual a $n_h$, entonces 
 
 Así, para cada estrato $h \ \ \ h=1,\ldots,H$ existe un conjunto de todas las posibles muestras denotado como soporte del estrato $h$, o $Q_h$. Cada uno de los soportes $Q_h$ induce la definición del soporte general de la siguiente manera
 \begin{equation}
-    Q^H=\bigcup_{h=1}^HQ_h.
+    Q^H=\bigtimes_{h=1}^HQ_h.
 \end{equation}
 
-La cardinalidad de cada soporte $Q_h$ depende del diseño de muestreo utilizado en la selección de la muestra del estrato $h$. Así
+En donde $\bigtimes$ denota el operador de producto cartesiano\footnote{Por ejemplo, en presencia de dos conjunto $A=\{a, b\}$ y $B=\{1, 2\}$, entonces el producto cartesiano entre $A$ y $B$ es $A \bigtimes B = \{(a, 1), (a, 2), (b, 1), (b, 2) \}$.}. La cardinalidad de cada soporte $Q_h$ depende del diseño de muestreo utilizado en la selección de la muestra del estrato $h$. Así
 \begin{equation}
     \#Q^H=\prod_{h=1}^H\#Q_h.
 \end{equation}
@@ -307,3 +307,38 @@ Nótese que $\sum_{s\in Q^H}p(s)=1$ porque $\#Q^H=\prod_{h=1}^H\binom{N_h}{n_h}$
 \end{itemize}
 
 
+\begin{Eje}
+Suponga que nuestra población de ejemplo $U$ está particionada de acuerdo a la sección anterior. Es necesario definir los dos estratos en \textsf{R}, de manera tal que ningún elemento tenga una doble pertenencia a algún estrato.
+
+<<>>=
+U1  <-  c("Erik", "Sharon")
+N1  <-  length(U1)
+U2  <-  c("Yves", "Ken", "Leslie")
+N2  <-  length(U2)
+@
+
+\textsf{R} permite realizar ope\-ra\-cio\-nes entre conjuntos de datos. En particular, el operador \texttt{union} es utilizado para verificar que la unión de los estratos dé como resultado la población de ejemplo $U$. Nótese que el tamaño poblacional es la suma de los tamaños de los dos estratos.
+
+<<>>=
+U <- union(U1,U2)
+N <-  N1+N2
+
+U
+N
+@
+
+Se ha decidido seleccionar una muestra aleatoria simple sin reemplazo de tamaño $n_1=1$ para $U_1$ y una muestra aleatoria simple sin reemplazo de tamaño $n_2=2$ para $U_2$. De tal forma que la muestra general será de tamaño $n=n_1+n_2=3$.
+
+<<>>=
+sam1 <- sample(N1, 1, replace=FALSE)
+U1[sam1]
+
+sam2 <- S.SI(N2,2)
+U2[sam2]
+
+sam <- union(U1[sam1],U2[sam2])
+sam
+@
+\end{Eje}
+
+Por supuesto, es posible utilizar la función \texttt{sample} que viene incorporada en el ambiente genérico de \textsf{R} o también es posible utilizar la función la función \texttt{S.SI} del paquete \texttt{TeachingSampling}. Sin importar el algoritmo de selección de las muestras aleatorias simples sin reemplazo, es importante notar que se han seleccionado tantas muestras como estratos existen en la población.
