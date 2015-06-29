@@ -297,13 +297,18 @@ cor(Datos)
 
 Para visualizar la relación entre las variables de interés, se utiliza la función \texttt{pairs} para obtener los diagramas de dispersión para cada par de variables justo como lo muestra la figura 1.4.
 
-%\begin{figure}[!h]
-%<<>>=
-%pairs(Datos)
-%@
-%\caption{\emph{Relación entre las características de interés.}}
-%\label{F1.4}
-%\end{figure}
+<<echo=FALSE>>=
+Datos <- Datos[sample(nrow(Datos), 1000),]
+@
+
+\begin{figure}[!h]
+<<>>=
+library(GGally)
+ggpairs(Datos)
+@
+\caption{\emph{Relación entre las características de interés.}}
+\label{F1.4}
+\end{figure}
 
 La tabla 1.1. resume los parámetros de interés que, mediante una adecuada estrategia de muestreo, se deben estimar para resolver el objetivo principal de la investigación. Si se desean estimaciones discriminadas por nivel industrial, entonces la tabla 1.2. da cuenta del valor de estos parámetros dentro de los subgrupos poblacionales.
 

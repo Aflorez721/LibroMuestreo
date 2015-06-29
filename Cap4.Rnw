@@ -16,7 +16,7 @@ library(knitr)
 \end{flushright}
 \end{quote}
 
-Las estrategias de muestreo implementadas en el capítulo anterior, utilizaban métodos de selección tales que la probabilidad de inclusión o probabilidad de selección es idéntica para todos los elementos de la población y se estimaban los parámetros de interés utilizando el estimador de Hansen-Hurwitz, para diseños de muestreo con reemplazo y el estimador de Horvitz-Thompson, para diseños de muestreo sin reemplazo. Las anteriores estrategias no tienen en cuenta la variación innata de las características de interés a través de las unidades poblacionales. Por lo tanto, los an\-te\-rio\-res estimadores, dada su construcción genérica y el principio de representatividad, tenderán a poseer una gran variación.
+Las estrategias de muestreo implementadas en el capítulo anterior, utilizaban métodos de selección tales que la probabilidad de inclusión o probabilidad de selección es idéntica para todos los elementos de la población y se estimaban los parámetros de interés utilizando el estimador de Hansen-Hurwitz, para diseños de muestreo con reemplazo y el estimador de Horvitz-Thompson, para diseños de muestreo sin reemplazo. Las anteriores estrategias no tienen en cuenta la variación innata de las características de interés a través de las unidades poblacionales. Por lo tanto, los anteriores estimadores, dada su construcción genérica y el principio de representatividad, tenderán a poseer una gran variación.
 
 \citeasnoun{Raj} afirma que, en cuestión de precisión, se puede tener una mayor ganancia cuando se utilizan diseños de muestreo con probabilidades desiguales. En la mayoría de los casos prácticos, la característica de interés no presenta un comportamiento uniforme con respecto a los rótulos de la población. Sin embargo, cuando el marco de muestreo disponible para la selección de la muestra contiene además de la identificación y la ubicación de los elementos en la población, una característica auxiliar con\-ti\-nua disponible para todos los elementos de la población $x_k \ \ \ \forall k \in U$, es posible utilizar diseños de muestreo que implementen métodos de selección cuyas probabilidades de selección o inclusión, dependiendo del caso, sean proporcionales al total de la característica auxiliar, $t_x$.
 
@@ -273,7 +273,7 @@ La tabla \ref{T4.1} muestra los resultados particulares para esta estrategia de 
 <<echo = FALSE, results = 'asis'>>=
 Estimaciones = E.PO(estima, pik.s)
 T4.1 <- xtable(Estimaciones, caption ="\\emph{Estimaciones para el diseño de muestreo Poisson}", label ="T4.1")
-print(T4.1, caption.placement="top")
+print(T4.1, caption.placement="bottom")
 @
 
 \section{Diseño de muestreo PPT}
@@ -648,7 +648,7 @@ Los resultados de aplicar la estrategia de muestreo son muy favorables. Nótese,
 <<echo = FALSE, results = 'asis'>>=
 Estimaciones = E.PPS(estima, pk.s)
 T4.2 <- xtable(Estimaciones, caption ="\\emph{Muestreo PPT: estimación de los totales de las características de interés.}", label ="T4.2")
-print(T4.2, caption.placement="top")
+print(T4.2, caption.placement="bottom")
 @
 
 Asimismo, una estrategia alternativa es utilizar un diseño de muestreo con reemplazo y probabilidad de selección proporcional al tamaño junto con el estimador de Horvitz-Thompson, el cual es también insesgado. \citeasnoun{Sar} se preguntan cuál es el mejor estimador y llegan a la conclusión que dependiendo de la configuración de los valores de las características de interés y de información auxiliar un estimador tendrá menor varianza que el otro. Por tanto, no es posible generalizar. De lo que sí se puede estar seguro, es de la simplicidad, en materia de cálculos del estimador de Horvitz-Thompson. En la práctica, este es un argumento muy fuerte que incentiva el uso del estimador de Hansen-Hurwitz.
@@ -1184,7 +1184,7 @@ Los resultados para este ejercicio particular son excelentes. Nótese que los es
 <<echo = FALSE, results = 'asis'>>=
 Estimaciones = E.piPS(estima, pik.s)
 T4.3 <- xtable(Estimaciones, caption ="\\emph{Muestreo $pi$PT: estimación de los totales de las características de interés}", label ="T4.3")
-print(T4.3, caption.placement="top")
+print(T4.3, caption.placement="bottom")
 @
 
 Véase que para obtener estos resultados, fue necesario conocer el valor de $N$ dado por la longitud del vector de información auxiliar. Nótese que no siempre se puede asegurar el conocimiento del total poblacional. Sin embargo, aunque no se conociera, con la función \texttt{HT} se hubiera llegado a los mismos resultados, en términos de la estimación de los totales, pero no se obtendrían los estimativos concernientes a la varianza, tal y como se ilustra a continuación.

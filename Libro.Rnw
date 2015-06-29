@@ -21,7 +21,23 @@
 \fancyhead[LO]{\sffamily\rightmark}
 \fancyhead[RE]{\sffamily\leftmark}
 \renewcommand{\headrulewidth}{0.5pt}
-%
+%--------------------------------------------------------------------------------
+%----------------------Hacer que quepan más tablas por página--------------------
+% Max fraction of page for floats at top (default 0.7)
+\renewcommand{\topfraction}{0.95}
+% Max fraction of page for floats at top (default 0.7)
+\renewcommand{\bottomfraction}{0.95}
+% Min fraction of page for text (default 0.2)
+\renewcommand{\textfraction}{0.05}
+% Min fraction of floatpage that should have floats (default 0.5)
+\renewcommand{\floatpagefraction}{0.35}
+% Max number of floats at top of page (default 2)
+\setcounter{topnumber}{3}
+% Max number of floats at bottom of page (default 1)
+\setcounter{bottomnumber}{3}
+% Max number of floats on a page (default 3)
+\setcounter{totalnumber}{6}
+%--------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------
 
 \begin{document}
@@ -54,13 +70,21 @@
 \newtheorem{Defi}{Definición}
 \numberwithin{Defi}{section}
 % --------------------------------------------------------------------------------
+\renewcommand{\tablename}{Tabla}
+\renewcommand{\listtablename}{Índice de Tablas}
+\renewcommand{\contentsname}{Contenido}
+\renewcommand{\proofname}{\bfseries \slshape Prueba}
+\renewcommand{\qedsymbol}{$\blacksquare$}
+% --------------------------------------------------------------------------------
+
+% --------------------------------------------------------------------------------
 \pagestyle{empty}
 \Sexpr{knit_child('portada.Rnw')}
 \frontmatter
 \tableofcontents
 % --------------------------------------------------------------------------------
 \mainmatter
-\Sexpr{knit_child('portada.Rnw')}
+\pagestyle{fancy}
 \Sexpr{knit_child('cap1.Rnw')}
 \Sexpr{knit_child('cap2.Rnw')}
 \Sexpr{knit_child('cap3.Rnw')}
