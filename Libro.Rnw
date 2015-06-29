@@ -84,7 +84,10 @@
 \tableofcontents
 % --------------------------------------------------------------------------------
 \mainmatter
+<<<<<<< HEAD
 \pagestyle{fancy}
+=======
+>>>>>>> de54ed39dc8ff39edaca4a25be7a39687c0657ca
 \Sexpr{knit_child('cap1.Rnw')}
 \Sexpr{knit_child('cap2.Rnw')}
 \Sexpr{knit_child('cap3.Rnw')}

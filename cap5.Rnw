@@ -5,6 +5,7 @@ library(xtable)
 options(scipen = 100, digits = 2)
 set.seed(12345)
 library(knitr)
+library(plyr)
 @
 %--------------------
 \chapter[Muestreo estratificado]{Muestreo estratificado}
@@ -935,6 +936,7 @@ print(T5.3, caption.placement="bottom")
 Estimaciones = E.STSI(Level, N, n, estima)
 T5.4 <- xtable(Estimaciones[,,"Taxes"], caption ="\\emph{Muestreo aleatorio estratificado: estimación del total de la característica \\texttt{Taxes} para cada uno de los estratos y para la población.}", label ="T5.4")
 print(T5.4, caption.placement="bottom")
+<<<<<<< HEAD
 @
 
 La función \texttt{Domains} contenida en el paquete \texttt{TeachingSampling} se utiliza para obtener las variables indicadoras $z_{dk}$ para cada dominio, el único argumento de la función es un vector de pertenencia de cada individuo. En este caso, el vector de pertenencia es SPAM, la salida de esta función es una matriz de unos y ceros, en donde cada columna está dicotomizada. Exis\-ten tantas columnas como subgrupos poblacionales, y en cada columna el número uno implica la pertenencia del elemento al dominio y cero la no pertenencia del elemento al dominio.
@@ -1288,3 +1290,6 @@ Es notable la ganancia en eficiencia de esta estrategia de muestreo, no hay much
 \thispagestyle{empty}
 
 
+=======
+@
+>>>>>>> de54ed39dc8ff39edaca4a25be7a39687c0657ca
