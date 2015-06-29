@@ -1156,34 +1156,35 @@ qplot(Income, Taxes, data = Lucy, color = Level)
 
 Con este generoso marco de muestreo es claro que las estimaciones serán más precisas. Aunque vale la pena preguntarse si la eficiencia de las estimaciones mejorará notablemente con estas dos variables auxiliares. Se utilizará la asignación proporcional, como en la sección pasada, para hacer los resultados comparables. No olvide que en cada estrato la selección de las muestras se hace con reemplazo.
 
+<<message=FALSE>>=
+data(BigLucy)
+attach(BigLucy)
 
-\begin{verbatim}
-> data(Lucy)
-> attach(Lucy)
-> m1 <- 14
-> m2 <- 123
-> m3 <- 263
-> m <- c(m1,m2,m3)
-\end{verbatim}
+N1 <- summary(Level)[[1]]
+N2 <- summary(Level)[[2]]
+N3 <- summary(Level)[[3]]
+N <- c(N1,N2,N3)
+N
+
+m1 <- round(2000 * N1/sum(N))
+m2 <- round(2000 * N2/sum(N))
+m3 <- round(2000 * N3/sum(N))
+m <- c(m1,m2,m3)
+m
+@
 
 La función \texttt{S.STPPS(E,x,m)} se utiliza para la extracción de las $H$ muestras con reemplazo en cada estrato. Los argumentos de la función son los siguientes: \texttt{E}, la variable de estratificación en la población entera, en este caso particular es Nivel. \texttt{x}, un vector de información auxiliar continua conteniendo cada uno de los valores en la población, en este caso particular es \texttt{Income}. \texttt{m}, un vector conteniendo $H$ tamaños de muestra para cada estrato.
 
 La función \texttt{S.STPPS(E,x,m)} divide el marco de muestreo en $H$ estratos y en cada uno de ellos selecciona una muestra con reemplazo de acuerdo a probabilidades de selección dadas por (5.3.1)\footnote{Esta función trata cada estrato como una población separada de modo que la suma de las probabilidades de selección en cada estrato suman uno y en toda la población suman $H$.}. El resultado de la función es en dos vías: por una parte, la función devuelve los índices de los elementos seleccionados con reemplazo en cada estrato y, por otra, devuelve el vector de probabilidades de selección de los elementos en la muestra. Cada una de las anteriores salidas es de tamaño $m=\sum_{h=1}^Hm_h$. Para este ejercicio el resultado de la función se ha guardado en el objeto \texttt{res}, la muestra en el objeto \texttt{sam} y el vector de probabilidades de selección en la muestra se ha guardado en el objeto \texttt{pk}.
 
-\begin{verbatim}
-> res <- S.STPPS(Level,Income,m)
-> sam <- res[,1]
-> pk <- res[,2]
-> muestra <- Lucy[sam,]
-> attach(muestra)
-> muestra
-           ID Ubication  Level Zone Income Employees Taxes SPAM
-2344   AB1199    c25k67    Big    B   1150        88  62.0  yes
-2369.1  AB748    c25k92    Big    D   1300       172  68.0  yes
-2320   AB1038    c25k43    Big    A   1044        90  52.0  yes
-1957    AB575    c20k76 Medium    C    550        35  14.0  yes
-...
-\end{verbatim}
+<<message=FALSE>>=
+res <- S.STPPS(Level, Income, m)
+sam <- res[,1]
+pk <- res[,2]
+muestra <- BigLucy[sam,]
+attach(muestra)
+head(muestra)
+@
 
 Aplicando los índices obtenido en \texttt{sam} al marco de muestreo, obtenemos la información para realizar el proceso de recolección de datos. Cuando la información es recolectada se creará un archivo de datos conteniendo cada uno de los valores de la(s) característica(s) de interés en la muestra seleccionada. Esta archivo es adjuntado a \textsf{R} mediante la función \texttt{attach}.
 
@@ -1191,37 +1192,34 @@ La etapa de estimación se realiza con la función \texttt{E.STPPS(y,pk,m,E)} de
 
 La función \texttt{E.STPPS} arroja la estimación de cada una de las características de interés discriminada por cada estrato y el gran total así como también la varianza estimada y el coeficiente de variación estimado. También arroja las estimaciones de los tamaños de los estratos $\hat{N}_h$ y del tamaño de la población total dado por $\hat{N}=\sum_{h=1}^H\hat{N}_h$.
 
-\begin{verbatim}
+<<results='hide'>>=
+estima <- data.frame(Income, Employees, Taxes)
+E.STPPS(estima, pk, m, Level)
+@
 
-> estima <- data.frame(Income, Employees, Taxes)
-> E.STPPS(estima, pk, m, Level)
+<<echo = FALSE, results = 'asis'>>=
+Estimaciones = E.STPPS(estima, pk, m, Level)
+T5.14 <- xtable(Estimaciones[,,"N"], caption ="\\emph{Muestreo estratificado PPT: estimación del tamaño de los estratos y de la población.}", label ="T5.14")
+print(T5.14, caption.placement="bottom")
+@
 
+<<echo = FALSE, results = 'asis'>>=
+Estimaciones = E.STPPS(estima, pk, m, Level)
+T5.15 <- xtable(Estimaciones[,,"Income"], caption ="\\emph{Muestreo estratificado PPT: estimación del total de la característica \\texttt{Income} para cada uno de los estratos y para la población.}", label ="T5.15")
+print(T5.15, caption.placement="bottom")
+@
 
-, , 1
-               Grande      Mediano      Pequeño        Total
-Total est  85.5308339 739.22157976 1.517982e+03 2.342734e+03
-Varianza    0.2224841   0.22805284 9.655518e-01 1.416089e+00
-cve         0.5514762   0.06460158 6.473233e-02 5.079515e-02
+<<echo = FALSE, results = 'asis'>>=
+Estimaciones = E.STPPS(estima, pk, m, Level)
+T5.16 <- xtable(Estimaciones[,,"Employees"], caption ="\\emph{Muestreo estratificado PPT: estimación del total de la característica \\texttt{Employees} para cada uno de los estratos y para la población.}", label ="T5.16")
+print(T5.16, caption.placement="bottom")
+@
 
-, , Income
-                Grande      Mediano      Pequeño        Total
-Total est  1.03706e+05 4.873510e+05 4.441600e+05 1.035217e+06
-Varianza   6.77756e-26 8.033922e-27 2.170687e-27 7.798029e-26
-cve        2.51034e-16 1.839170e-17 1.048960e-17 2.697497e-17
-
-, , Employees
-                Grande      Mediano      Pequeño        Total
-Total est  1.17441e+04 6.084383e+04 7.898202e+04 1.515700e+05
-Varianza   3.70116e+03 3.547822e+03 5.067016e+03 1.231601e+04
-cve        5.18021e-01 9.789587e-02 9.012554e-02 7.321868e-02
-
-
-, , Taxes
-                 Grande      Mediano      Pequeño        Total
-Total est  6040.0336101 1.630756e+04 6.234842e+03 2.858244e+04
-Varianza   3145.7857046 1.461127e+02 1.518736e+01 3.307086e+03
-cve           0.9285926 7.412334e-02 6.250514e-02 2.011979e-01
-\end{verbatim}
+<<echo = FALSE, results = 'asis'>>=
+Estimaciones = E.STPPS(estima, pk, m, Level)
+T5.17 <- xtable(Estimaciones[,,"Taxes"], caption ="\\emph{Muestreo estratificado PPT: estimación del total de la característica \\texttt{Taxes} para cada uno de los estratos y para la población.}", label ="T5.17")
+print(T5.17, caption.placement="bottom")
+@
 
 Nótese que las estimaciones dentro de los estratos tienen un coeficiente de variación muy pequeño al igual que la estimación para la población total. La siguiente tabla muestra los resultados para este ejercicio particular.
 
