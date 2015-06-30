@@ -1,11 +1,14 @@
 %--------------------
-<<echo=FALSE>>=
+<<echo=FALSE, message=FALSE>>=
 library(TeachingSampling)
+data(BigLucy)
 library(xtable)
+library(ggplot2)
+library(gridExtra)
 options(scipen = 100, digits = 2)
 set.seed(12345)
 library(knitr)
-library(plyr)
+knit_theme$set("acid")
 @
 %--------------------
 \chapter[Muestreo estratificado]{Muestreo estratificado}
@@ -855,11 +858,11 @@ Bajo estos antecedentes, el gobierno está dispuesto a brindar planes de financi
 data(BigLucy)
 attach(BigLucy)
 
-par(mfrow = c(2, 2))
-boxplot(Income ~ Level, main = "Boxplot para Income")
-boxplot(Taxes ~ Level, main = "Boxplot para Taxes")
-boxplot(Employees ~ Level, main = "Boxplot para Employees")
-boxplot(Years ~ Level, main = "Boxplot para Years")
+p1 <- qplot(Level, Income, data=BigLucy, geom=c("boxplot"))
+p2 <- qplot(Level, Employees, data=BigLucy, geom=c("boxplot"))
+p3 <- qplot(Level, Taxes, data=BigLucy, geom=c("boxplot"))
+p4 <- qplot(Level, Years, data=BigLucy, geom=c("boxplot"))
+grid.arrange(p1, p2, p3, p4, ncol = 2)
 @
 \caption{\emph{Boxplot de las características de interés en cada nivel industrial.}}
 \label{F5.1}
@@ -1142,7 +1145,6 @@ attach(Lucy)
 @
 
 <<results='hide', fig.show='hide'>>=
-library(ggplot2)
 qplot(Income, Taxes, data = BigLucy, color = Level)
 @
 

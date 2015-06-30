@@ -1,4 +1,17 @@
 %--------------------
+<<echo=FALSE, message=FALSE>>=
+library(TeachingSampling)
+data(BigLucy)
+library(xtable)
+library(ggplot2)
+library(gridExtra)
+options(scipen = 100, digits = 2)
+set.seed(12345)
+library(knitr)
+knit_theme$set("acid")
+@
+%--------------------
+%--------------------
 \chapter[Encuestas y estudios por muestreo]{Encuestas y estudios por muestreo}
 <<echo=FALSE>>=
 options(scipen = 100, digits = 4)
@@ -220,7 +233,7 @@ summary(BigLucy[,5:10])
 
 Por medio de la función \texttt{total}, tenemos acceso al total de las tres características de interés.
 
-<<>>=
+<<message=FALSE>>=
 attach(BigLucy)
 total <- function(x){length(x)*mean(x)}
 
@@ -247,12 +260,12 @@ xtabs(Income~Level+SPAM)
 La función \texttt{boxplot} permite realizar el diagrama de cajas de cada una de las variables de interés. Nótese que, a excepción de la variable \texttt{Years}, existe una dependencia marcada en el comportamiento de las características cuantitativas con el nivel industrial.
 
 \begin{figure}[!h]
-<<>>=
-par(mfrow=c(2,2))
-boxplot(Income~Level)
-boxplot(Employees~Level)
-boxplot(Taxes~Level)
-boxplot(Years~Level)
+<<fig.height=5>>=
+p1 <- qplot(Level, Income, data=BigLucy, geom=c("boxplot"))
+p2 <- qplot(Level, Employees, data=BigLucy, geom=c("boxplot"))
+p3 <- qplot(Level, Taxes, data=BigLucy, geom=c("boxplot"))
+p4 <- qplot(Level, Years, data=BigLucy, geom=c("boxplot"))
+grid.arrange(p1, p2, p3, p4, ncol = 2)
 @
 \caption{\emph{Boxplot de las características de interés en cada nivel industrial.}}
 \label{F1.1}
@@ -261,12 +274,12 @@ boxplot(Years~Level)
 Sin embargo, a diferencia del caso anterior, no parece existir una dependencia en el comportamiento de las características cuantitativas con el hábito de enviar publicidad por internet. 
 
 \begin{figure}[!h]
-<<>>=
-par(mfrow=c(2,2))
-boxplot(Income~SPAM)
-boxplot(Employees~SPAM)
-boxplot(Taxes~SPAM)
-boxplot(Years~SPAM)
+<<fig.height=5>>=
+p1 <- qplot(SPAM, Income, data=BigLucy, geom=c("boxplot"))
+p2 <- qplot(SPAM, Employees, data=BigLucy, geom=c("boxplot"))
+p3 <- qplot(SPAM, Taxes, data=BigLucy, geom=c("boxplot"))
+p4 <- qplot(SPAM, Years, data=BigLucy, geom=c("boxplot"))
+grid.arrange(p1, p2, p3, p4, ncol = 2)
 @
 \caption{\emph{Boxplot de las características de interés en cada nivel industrial.}}
 \label{F1.2}
@@ -275,12 +288,12 @@ boxplot(Years~SPAM)
 Las figuras \ref{F1.1} y \ref{F1.2} muestran la dispersión y locación de las características de interés por cada nivel industrial. En general, las empresas grandes tienen ingresos más altos, aportan una carga impositiva más alta y emplean a más personas que las empresas medianas y pequeñas. Es deseable que el marco de muestreo contenga la pertenencia al nivel industrial de cada empresa en la población porque es un buen discriminante y permite la implementación de estrategias de muestreo adecuadas que guíen a estimaciones más precisas. La función n \texttt{barplot} muestra un diagrama de barras del total de la variable \texttt{Level}.
 
 \begin{figure}[!h]
-<<>>=
-par(mfrow=c(2,2))
-hist(Income)
-hist(Employees)
-hist(Taxes)
-hist(Years)
+<<fig.height=5>>=
+p1 <- qplot(Income, data=BigLucy, geom=c("histogram"))
+p2 <- qplot(Employees, data=BigLucy, geom=c("histogram"))
+p3 <- qplot(Taxes, data=BigLucy, geom=c("histogram"))
+p4 <- qplot(Years, data=BigLucy, geom=c("histogram"))
+grid.arrange(p1, p2, p3, p4, ncol = 2)
 @
 \caption{\emph{Histograma de las características de interés.}}
 \label{F1.3}
@@ -302,7 +315,7 @@ Datos <- Datos[sample(nrow(Datos), 1000),]
 @
 
 \begin{figure}[!h]
-<<>>=
+<<fig.height=5>>=
 library(GGally)
 ggpairs(Datos)
 @

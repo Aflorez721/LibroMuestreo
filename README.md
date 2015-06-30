@@ -6,7 +6,8 @@ Esta nueva versión del libro contiene:
 
 1. Una nueva base de datos para correr los ejemplos. `Lucy`, que contenía 2396 unidades, ha sido reemplazada por `BigLucy`, con más de 85mil unidades.
 2. Todos los ejemplos computacionales han sido actualizados y se ejecutan directamente desde el archivo .Rnw con el paquete `knitr`.
-3. Se han corregido algunos errores gramaticales y errores en las fórmulas y expresiones matemáticas.
+3. Todos los gráficos han sido traducidos a `ggplot2`.
+4. Se han corregido algunos errores gramaticales y errores en las fórmulas y expresiones matemáticas.
 
 ¡Sean todos bienvenidos con comentarios, ideas, y actualizaciones!
 
