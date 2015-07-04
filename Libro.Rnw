@@ -23,19 +23,12 @@
 \renewcommand{\headrulewidth}{0.5pt}
 %--------------------------------------------------------------------------------
 %----------------------Hacer que quepan más tablas por página--------------------
-% Max fraction of page for floats at top (default 0.7)
 \renewcommand{\topfraction}{0.95}
-% Max fraction of page for floats at top (default 0.7)
 \renewcommand{\bottomfraction}{0.95}
-% Min fraction of page for text (default 0.2)
 \renewcommand{\textfraction}{0.05}
-% Min fraction of floatpage that should have floats (default 0.5)
 \renewcommand{\floatpagefraction}{0.35}
-% Max number of floats at top of page (default 2)
 \setcounter{topnumber}{3}
-% Max number of floats at bottom of page (default 1)
 \setcounter{bottomnumber}{3}
-% Max number of floats on a page (default 3)
 \setcounter{totalnumber}{6}
 %--------------------------------------------------------------------------------
 %--------------------------------------------------------------------------------
@@ -90,7 +83,7 @@
 \Sexpr{knit_child('cap3.Rnw')}
 \Sexpr{knit_child('cap4.Rnw')}
 \Sexpr{knit_child('cap5.Rnw')}
-%\Sexpr{knit_child('test.Rnw')}
+\Sexpr{knit_child('cap6.Rnw')}
 % --------------------------------------------------------------------------------
 \bibliography{LibroBib}
 % --------------------------------------------------------------------------------
