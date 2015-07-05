@@ -5,6 +5,9 @@
 \usepackage{amsmath,amsfonts,amssymb,amsthm,amscd,enumerate, mathtools}
 \usepackage{makeidx}
 \usepackage[full]{harvard}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{bigstrut}
 \makeindex
 \decimalpoint
 %----------------------Márgenes y tamaño del libro--------------------------------
@@ -84,6 +87,7 @@
 \Sexpr{knit_child('cap4.Rnw')}
 \Sexpr{knit_child('cap5.Rnw')}
 \Sexpr{knit_child('cap6.Rnw')}
+\Sexpr{knit_child('cap7.Rnw')}
 % --------------------------------------------------------------------------------
 \bibliography{LibroBib}
 % --------------------------------------------------------------------------------

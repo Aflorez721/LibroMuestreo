@@ -1488,5 +1488,9 @@ Siguiendo con \citeasnoun{Til}, una estrategia se dice representativa si permite
 
 
 
-
+%--------------------
+\clearpage
+\newpage
+\phantom{Ard}
+\thispagestyle{empty}
 %--------------------

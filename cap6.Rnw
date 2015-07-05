@@ -17,7 +17,7 @@ knit_theme$set("acid")
 \begin{quote}
 \textsf{En encuestas complejas, los grupos poblacionales de elementos que se forman naturalmente como barrios, municipios o escuelas pueden ser tratados como unidades de muestreo. Este tipo de esquemas de muestreo ayudan a aumentar el tamaño de muestra manteniendo el costo de la encuesta.}
 \begin{flushright}
-\textsf{Risto Lehtonen (2004)}
+\textsf{\citeasnoun{Leh}} 
 \end{flushright}
 \end{quote}
 
@@ -468,7 +468,7 @@ mI   <-  UI[samI]
 mI
 @
 
-En este caso particular la  muestra con reemplazo está compuesta por $U_3$ y, como era de esperarse, por tener la más alta probabilidad de selección, por $U_1$. Para estimar el total poblacional, utilizamos la función \texttt{HH} del paquete muestreo con los totales de los conglomerados seleccionados y sus respectivas probabilidades de selección.
+En este caso particular la  muestra con reemplazo está compuesta por $U_3$ y, como era de esperarse, por tener la más alta probabilidad de selección, por $U_1$. Para estimar el total poblacional, utilizamos la función \texttt{HH} del paquete \texttt{TeachingSampling} con los totales de los conglomerados seleccionados y sus respectivas probabilidades de selección.
 
 <<>>=
 tyIm  <-  tyI[samI]
@@ -685,9 +685,12 @@ qplot(Zone, Employees, data=BigLucy, geom=c("boxplot"))
 
 Es así como en una misma zona geográfica, es posible encontrar una empresa grande rodeada de empresas pequeñas o medianas. Este es un muy buen indicio en la etapa del diseño de muestreo pues quiere decir que el comportamiento de las características de interés dentro de cada área geo\-grá\-fi\-ca es muy disperso. La figura \ref{F6.2} presenta el comportamiento de las características de interés en cada una de las cinco zonas geográficas de la ciudad. Nótese que no es posible identificar un comportamiento estructural significativamente diferente en cada zona, sino que por el contrario, el comportamiento es heterogéneo dentro de cada zona y homogéneo entre las zonas.
 
-Aunque no se conoce el número de empresas en el sector industrial, el gobierno ha estimado según datos de años anteriores la existencia de 85000 empresas para el último año fiscal. Con esta información se ha decidido seleccionar una muestra aleatoria simple de conglomerados de tamaño $n_I=10$. Por tanto, el tamaño muestral de empresas esperado corresponde a $85000\dfrac{10}{100}=8500$. De la población de $N_I=100$ conglomerados de áreas se selecciona una muestra aleatoria simple de $n_I=10$ utilizando la función \texttt{S.SI} del paquete muestreo. En este caso particular, los conglomerados incluidos en la muestra sin reemplazo corresponde a la \textbf{Zona A} y a la \textbf{Zona E}.
+Aunque no se conoce el número de empresas en el sector industrial, el gobierno ha estimado según datos de años anteriores la existencia de 85000 empresas para el último año fiscal. Con esta información se ha decidido seleccionar una muestra aleatoria simple de conglomerados de tamaño $n_I=10$. Por tanto, el tamaño muestral de empresas esperado corresponde a $85000\dfrac{10}{100}=8500$. De la población de $N_I=100$ conglomerados de áreas se selecciona una muestra aleatoria simple de $n_I=10$ utilizando la función \texttt{S.SI} del paquete \texttt{TeachingSampling}. En este caso particular, los conglomerados incluidos en la muestra sin reemplazo corresponde a la \textbf{Zona A} y a la \textbf{Zona E}.
 
-<<>>=
+<<message=FALSE, warning=FALSE>>=
+data(BigLucy)
+attach(BigLucy)
+
 UI <- levels(BigLucy$Zone)
 NI <- length(UI)
 nI <- 10
@@ -702,9 +705,6 @@ Un equipo de encuestadores se dispone a recolectar la información de cada una d
 Con la función \texttt{rbind} es posible unir la información de las zonas geográficas seleccionadas en la muestra. Con ayuda de la función \texttt{T.SIC(y,C)}, del paquete \texttt{TeachingSampling}, es posible obtener los totales de las características de interés en cada conglomerado. Los argumentos de esta función son \texttt{y}, el conjunto de datos (una sola variable o un conjunto de variables) del censo en cada conglomerado y \texttt{C}, una variable que indica la pertenencia del elemento, en este caso de las empresas, al conglomerado. El resultado de la función es el total de elementos en cada conglomerado, así como el total de las características de interés en cada uno de los conglomerados. En este caso particular, el tamaño de la muestra de empresas es $307 + 165=  472$. Nótese que, como en los casos de estimación de los capítulos anteriores, se crea un conjunto de datos de las características de interés definido por \texttt{estima <- data.frame(Income, Employees, Taxes)}.
 
 <<message=FALSE>>=
-data(BigLucy)
-attach(BigLucy)
-
 Lucy1 <- BigLucy[which(Zone == muestra[1]),]
 Lucy2 <- BigLucy[which(Zone == muestra[2]),]
 Lucy3 <- BigLucy[which(Zone == muestra[3]),]
@@ -757,3 +757,52 @@ barplot(estimaI$Ni, main = "Tamaños de los conglomerados")
 Es notable como el comportamiento de los totales es tan diferente en cada conglomerado en las características Ingreso y Empleados. Sin embargo, el comportamiento es similar en cuanto a la característica Impuestos. Es interesante observar que entre más disimilitud existe entre los totales de los conglomerados, más desviación relativa existe en la estimación. Como se dijo en la introducción de este capítulo, esta estrategia de muestreo es ineficiente en aquellos casos en que los totales de cada conglomerado no están correlacionados con las probabilidades de inclusión a nivel de conglomerados. Observando el gráfico, se establece que Impuestos es la única característica que presenta un comportamiento estable en relación a los conglomerados.
 
 La regla de oro se mantiene, una estrategia de muestreo es eficiente si las probabilidades de inclusión están correlacionadas con los valores de la característica de interés, en este caso con los totales de cada conglomerados.
+
+\section{Ejercicios}
+
+\begin{enumerate}[{6}.1]
+
+\item Argumente si las siguientes afirmaciones son falsas o verderas. Sustente su respuesta detallamente.
+\begin{enumerate}[(a)]
+\item En un diseño de muestreo de conglomerados, siempre se tiene un marco de muestreo de elementos de la población.
+\item En un diseño de muestreo de conglomerados, para la estimación de un total, se obtiene mayor precision si las probabilidades de selección o inclusión son proporcionales a los totales de la característica de interés en los conglomerados.
+\item En un diseño de muestreo de conglomerados, para la estimación de un total, se obtiene mayor precision si las probabilidades de selección o inclusión son proporcionales a la característica de interés de los elementos en los conglomerados.
+\item En la estimación de totales poblaciones, se nota que, casi siempre, $Var_{MASC}(t_{y,\pi})$ es mayor a $Var_{MAS}(t_{y,\pi})$.
+\item En un diseño de muestreo aleatorio simple de conglomerados de tamaño desigual, hay un aumento significativo de la varianza, respecto a un diseño de muestreo aleatorio simple de conglomerados de igual tamaño.
+\item En un diseño de muestreo PPT de conglomerados de tamaño desigual (con probabilidad proporcional al tamaño del conglomerado), hay una disminución significativa de la varianza, respecto a un diseño de muestreo aleatorio simple de conglomerados de tamaño desigual.
+\end{enumerate}
+
+\item Suponga que el objetivo de una encuesta es estimar el ingreso medio en un barrio de la ciudad. Asuma que en ese barrio existen $N_I=60$ manzanas. Se realiza un diseño de muestreo aleatorio simple de conglomerados y se seleccionan $n_I=5$ manzanas, en las cuales se entrevistan a todos los hogares. Los resultados de la encuesta se dan en la tabla \ref{tab6.2}
+
+\begin{table}[!h]
+  \centering
+  \caption{Tabla de las cinco manzanas seleccionadas: ejercicio 6.2}
+    \begin{tabular}{ccc}
+    \hline
+    ID Manzana & Hogares en la manzana & Ingreso total en la manzana
+    \\\hline
+    AW45  & 120   & 25000 \\
+    AW02  & 100   & 24000 \\
+    AW31  & 80    & 19000 \\
+    AW28  & 95    & 20100 \\
+    AW44  & 80    & 18000 \\\hline
+    \end{tabular}%
+  \label{tab6.2}%
+\end{table}%
+
+\begin{enumerate}[(a)]
+\item Estime el ingreso total de los hogares en el barrio. Reporte el coeficiente de variación estimado.
+\item Estime el número de hogares en el barrio. Reporte el coeficiente de variación estimado.
+\item Asumiendo que en el barrio hay $N=2000$ hogares, estime el ingreso medio de los hogares en el barrio. Reporte el coeficiente de variación estimado.
+\item Estime el ingreso medio utilizando el estimador de Hájek. Explique la diferencia con respecto a la estimación del punto anterior.
+\end{enumerate}
+
+\end{enumerate}
+
+\clearpage
+\newpage
+\phantom{Ard}
+\thispagestyle{empty}
+
+
+

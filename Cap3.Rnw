@@ -1849,3 +1849,9 @@ Frecuencia    &  1 & 5 & 13 & 9 & 7 & 4 & 6 & 4 & 1\\ \hline
 
 \item Demuestre o refute la siguiente afirmación: <<En un diseño de muestreo sistemático, si hay homogeneidad dentro de los grupos y heterogeneidad entre sus medias, entonces este diseño es menos eficiente que el diseño de muestreo aleatorio simple>>.
 \end{enumerate}
+
+%--------------------
+\clearpage
+\newpage
+\phantom{Ard}
+\thispagestyle{empty}

@@ -16,7 +16,7 @@ knit_theme$set("acid")
 \begin{quote}
 \textsf{La estratificación es una de las técnicas más difundidas y usadas en muestreo puesto que tiene funcionalidades estadísticas y administrativas que la hacen atractiva: permite tratar con subpoblaciones, aumenta la eficiencia de las estimaciones y contribuye a la ad\-mi\-nis\-tra\-ción eficiente de grandes encuestas.}
 \begin{flushright}
-\textsf{Richard Valliant (2000)}
+\textsf{\citeasnoun{Valliant2000}}
 \end{flushright}
 \end{quote}
 
@@ -1149,7 +1149,7 @@ qplot(Income, Taxes, data = BigLucy, color = Level)
 @
 
 \begin{figure}[!h]
-<<>>=
+<<fig.height=5>>=
 qplot(Income, Taxes, data = Lucy, color = Level)
 @
 \caption{\emph{Relación entre Income y Taxes.}}
@@ -1301,9 +1301,4 @@ Es notable la ganancia en eficiencia de esta estrategia de muestreo, no hay much
 
 
 \end{enumerate}
-
-\clearpage
-\newpage
-\phantom{Ard}
-\thispagestyle{empty}
 
