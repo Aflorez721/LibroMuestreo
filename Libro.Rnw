@@ -88,6 +88,7 @@
 \Sexpr{knit_child('cap5.Rnw')}
 \Sexpr{knit_child('cap6.Rnw')}
 \Sexpr{knit_child('cap7.Rnw')}
+\Sexpr{knit_child('cap8.Rnw')}
 % --------------------------------------------------------------------------------
 \bibliography{LibroBib}
 % --------------------------------------------------------------------------------
