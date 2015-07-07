@@ -1312,7 +1312,165 @@ y_k=33.36+0.77x_k+e_k
 Dado que la estimación de una razón y la media ponderada son casos particulares de la estimación de los coeficientes de regresión, la función \texttt{E.Beta} permite fácilmente el cálculo de dichas estimaciones fijando los parámetros de la misma convenientemente.
 \end{Eje}
 
+\subsection{Marco y Lucy}
 
+\index{Marco y Lucy}Es de vital interés para los colaboradores del gobierno conocer la relación entre las características de interés porque con estas relaciones pueden formular modelos econométricos que permitirán ahondar aún más en el comportamiento del sector en el último año fiscal. Si la información poblacional estuviese disponible, y los investigadores estuvieran interesados en formular un modelo distinto para cada las características de interés: número de Empleados y declaración de Impuestos en el último año fiscal con respecto a los Ingresos obtenidos en el mismo.
+
+A continuación, presentamos el razonamiento que nos lleva a escoger el modelo de regresión indicado para cada variable. La información auxiliar continua es la característica Ingreso mientras que las características de interés que tienen relación con esta son Empleados e Impuestos. ¿Tiene sentido ajustar ambos modelos con un intercepto? Piense en el siguiente escenario extremo que se puede presentar... el caso de una empresa que tiene ingresos nulos durante el año pero que aun así sigue funcionando con ayuda del mismo gobierno o con inyección de capital de alguna otra empresa o simplemente con la reserva de capital que la empresa debe guardar. Por lo tanto, si los ingresos son nulos, esto no significa que la empresa tenga cero empleados, entonces es posible que el modelo que se deba ajustar deba tener un intercepto. Por otro lado, si los ingresos son nulos, la declaración de impuestos de la empresa también será nula. Es decir, el modelo que se ajustaría para esta característica de interés no debería contener el parámetro del intercepto.
+
+Entonces, utilizando el método de los mínimos cuadrados estaríamos en capacidad de formular los dos modelos para responder a los objetivos de los investigadores. Ajustamos la regresión utilizando la función \texttt{lm}. La estructura de varianza para cada modelo se supone constante.
+
+<<message=FALSE>>=
+data(BigLucy)
+attach(BigLucy)
+y1 <- as.matrix(Employees)
+y2 <- as.matrix(Taxes)
+x <- as.matrix(Income)
+
+m1 <- lm(y1 ~ x)
+m1
+m2 <- lm(y2 ~ x - 1)
+m2
+@
+
+Así que los modelos ajustados en la población finita para las dos características de interés serían
+
+\begin{align*}
+Empleados_k &= \Sexpr{m1$coeff[1]} + \Sexpr{m1$coeff[2]} \times Ingreso_k +E_k\\ \\
+Impuestos_k &= \Sexpr{m2$coeff[1]} \times Ingreso_k + E_k
+\end{align*}
+
+Por supuesto, los anteriores modelos serían ajustados a la población. En la práctica no tenemos acceso a todos los valores que toman las ca\-rac\-te\-rís\-ti\-cas de interés, es por esto que debemos estimar los coeficientes de regresión. Suponga que el muestreo haya sido aleatorio simple sin reemplazo, con un tamaño de muestra de $n=2000$ empresas.
+
+<<message=FALSE>>= 
+N <- dim(BigLucy)[1]
+n <- 2000
+sam <- S.SI(N, n)
+muestra <- BigLucy[sam,]
+attach(muestra)
+@
+
+Para realizar la estimación de los coeficientes de regresión, es necesario utilizar la función \texttt{E.Beta} del paquete muestreo. Para el modelo con intercepto de la característica \texttt{Employees}, se fijan los parámetros de la función de manera que se ajuste con los preceptos del modelo, note que \texttt{b0} toma el valor \texttt{TRUE} y que, por la estructura de varianza, \texttt{ck} toma el valor \texttt{1}. Por otro lado para el modelo sin intercepto de la característica \texttt{Taxes}, el valor de \texttt{b0} debe ser \texttt{FALSE} y al igual que en el modelo anterior, \texttt{ck} sigue tomando el valor \texttt{1}.
+
+<<>>=
+E.Beta(N, n, as.matrix(Employees), Income, b0=TRUE, ck=1)
+E.Beta(N, n, as.matrix(Taxes), Income, b0=FALSE, ck=1)
+@
+
+Así, los modelos estimados en la población finita son
+\begin{align*}
+Empleados_k &= 25.43+0.087\times Ingreso_k+e_k\\ \\
+Impuestos_k &= 0.037\times Ingreso_k+e_k
+\end{align*}
+
+Esta estimación, a grandes rasgos, indica que, con ingresos nulos, las empresas tienen en promedio a 25 empleados, que cada 11.7 de aumento en ingreso se contrata a un empleado y que en promedio, las empresas pagan una tasa impositiva de 3.7\% al gobierno. Nótese que si el modelo hubiese sido de razón, entonces la función que se requeriría para la estimación del coeficiente de regresión, que coincide con la estimación de una razón sería:
+
+<<>>=
+E.Beta(N, n, as.matrix(Taxes), Income, b0=FALSE, ck=Income)
+@
+
+\section{Ejercicios}
+
+\begin{enumerate}[8.1]
+
+\item Realice el ejercicio lexicográfico del Ejemplo 8.3.1. Ilustre con este ejercicio si el estimador $\hat{M}$ es insesgado o no.
+
+\item Con los datos del ejercicio anterior, seleccione una muestra de tamaño $n=4$. Utilice el resultado 8.3.1 para obtener una  estimación de la función de distribución y grafique sus hallazgos.
+
+\item Para estimar el total de la característica de interés y de una población de N = 284 elementos, se utilizó un diseño de muestreo Poisson de tamaño de muestra esperado $n(S) = 10$. Las probabilidades de inclusión fueron proporcionales a una característica de información auxiliar $x$ cuyo total poblacional es $t_x = 8182$. El algoritmo de selección arrojó una muestra de tamaño efectivo de 12 elementos, para las cuales se obtuvo la información del ejercicio 4.5. Estime la mediana y las función de distribución para la característica de interés.
+
+\item Suponga que los datos del ejercicio anterior fueron obtenidos mediante un diseño de muestreo aleatorio simple. Estime la diferencia de totales $t_y-t_x$ mediante $\hat{t}_{y-x}=\hat{t}_{y,\pi}-\hat{t}_{x,\pi}$. Estime la varianza y calcule el coeficiente de variación estimado.
+
+\item Suponga que los datos del ejercicio anterior fueron obtenidos mediante un diseño de muestreo Bernoulli con $\pi=0.04$.
+
+\begin{enumerate}[(a)]
+\item Estime la razón de totales $t_y/t_x$ mediante $\hat{B}=\hat{t}_{y,\pi}/\hat{t}_{x,\pi}$. Estime la varianza y calcule el coeficiente de variación estimado.
+\item Estime el promedio de la característica de interés utilizando el estimador de Hájek. Estime la varianza y calcule el coeficiente de variación estimado.
+\item Estime el promedio de la característica de información auxiliar utilizando el estimador de Hájek. Estime la varianza y calcule el coeficiente de variación estimado.
+\end{enumerate}
+
+\item Verifique la expresión de la matriz de varianzas $AV(\hat{\mathbf{B}})$
+
+\item En una muestra de municipios, basada en un diseño de muestreo aleatorio simple, se seleccionaron $n=10$ municipios de $N=49$. En cada municipio se midieron las siguientes características: el número de habitantes en el municipio (\textbf{HAB}), el numero de automoviles en el municipio (\textbf{VEH}) y el número de efectivos militares en el municipio (\textbf{MIL}). Además, se sabe que cada municipio se categoriza (\textbf{CAT}) en urbano (\textbf{CAT}=1) o rural (\textbf{CAT}=0). A continuación se muestra la información recolectada de los municipios en la muestra:
+
+\begin{table}[!h]
+\centering
+\begin{tabular}{|c|c|c|c|}
+  \hline
+  \textbf{HAB} & \textbf{VEH} & \textbf{MIL} & \textbf{CAT} \\ \hline
+  2571 & 50 & 415 & 1 \\
+  2813 & 55 & 462 & 1 \\
+  3002 & 61 & 513 & 1 \\
+  3564 & 70 & 577 & 1 \\
+  3051 & 64 & 532 & 0 \\
+  2835 & 56 & 463 & 0 \\
+  3319 & 67 & 551 & 0 \\
+  2986 & 61 & 512 & 0 \\
+  2998 & 55 & 471 & 0 \\
+  2717 & 56 & 462 & 0 \\
+  \hline
+\end{tabular}
+\end{table}
+
+\begin{enumerate}[(a)]
+\item Estime el coeficiente de regresión de \textbf{HAB} contra \textbf{VEH} para un modelo de media común. Estime la varianza y calcule el coeficiente de variación. Interprete el coeficiente estimado.
+\item Estime el coeficiente de regresión de \textbf{HAB} contra \textbf{VEH} para un modelo de razón. Estime la varianza y calcule el coeficiente de variación. Interprete el coeficiente estimado.
+\item Estime los coeficientes de regresión de \textbf{HAB} contra \textbf{MIL} para un modelo de regresión simple con intercepto. Estime la matriz de varianzas y calcule los coeficientes de variación. Interprete los coeficiente estimados.
+\item Estime los coeficientes de regresión de \textbf{HAB} contra \textbf{CAT} para un modelo de media post-estratificada. Estime la matriz de varianzas y calcule los coeficientes de variación. Interprete los coeficiente estimados.
+\item Estime los coeficientes de regresión de \textbf{HAB} contra \textbf{MIL} para un modelo de razón post-estratificada mediante \textbf{CAT}. Estime la matriz de varianzas y calcule los coeficientes de variación. Interprete los coeficiente estimados.
+\end{enumerate}
+
+\item Sustente o refute las siguientes afirmaciones
+\begin{enumerate}[(a)]
+\item Una función lineal de estimadores insesgados es siempre insesgada para su contraparte poblacional.
+\item Se dice que un estimador es aproximadamente insesgado cuando es sesgado sólo para la parte lineal del desarrollo de Taylor.
+\item En la estimación de una razón poblacional $B$, se cumple para la variable linealizada $E_k=\frac{1}{t_z}(y_k-Bz_k)$ que $\sum_S E_k =0$ sin importar el diseño de muestreo utilizado en el planeamiento del estudio.
+\item El estimador $\hat{B}=\frac{\hat{t}_{y,\pi}}{\hat{t}_{z,\pi}}$ es sesgado para $B=\frac{t_y}{t_z}$ sólo si $z_k$ es continua.
+\item En diseños de muestreo de tamaño de muestra aleatorio, el estimador del promedio poblacional $\tilde{y}_S$ es insesgado y de menor varianza en comparación al estimador $\bar{y}_S$.
+\item El método de linealización de Taylor para aproximar la varianza de parámetros complejos y en muestras pequeñas conduce generalmente a la sobre-estimación de la varianza real.
+\item El estimador $\hat{\mathbf{B}}=\hat{\mathbf{T}}^{-1}\hat{\mathbf{t}}$ es siempre sesgado para $\mathbf{B}=\mathbf{T}^{-1}\mathbf{t}$ independientemente de la calidad del ajuste.
+\end{enumerate}
+
+\item Para el estimador de Hajek, definido como $\tilde{y}_S=\hat{t}_{y,\pi}/\hat{N}_{\pi}$ y, utilizando la técnica de linealización de Taylor, demuestre que este estimador es aproximadamente insesgado para $\bar{y}_U=t_y/N$ y proponga una expresión para el estimador aproximado de la varianza.
+
+\item Para el estimador alternativo del total, definido como $\hat{t}_{y,alt}=N\tilde{y}_S$ y, utilizando la técnica de linealización de Taylor, demuestre que este estimador es aproximadamente insesgado para $t_y=\sum_Uy_k$ y proponga una expresión para el estimador aproximado de la varianza.
+
+\item Para un diseño de muestreo en dos etapas, en donde la primera etapa se lleva a cabo un diseño PPT con reemplazo y en la segunda etapa se realiza un diseño MAS en cada UPM seleccionada, proponga un estimador aproximadamente insesgado para la razón poblacional y defina la varianza para este estimador.
+
+\item Argumente si las siguientes afirmaciones son falsas o verderas. Sustente su respuesta detallamente.
+
+\begin{enumerate}[(a)]
+\item Una función lineal de estimadores insesgados es siempre insesgada para su contraparte poblacional.
+\item Se dice que un estimador es aproximadamente insesgado cuando es sesgado sólo para la parte lineal del desarrollo de Taylor.
+\item El estimador $\hat{B}=\frac{\hat{t}_{y,\pi}}{\hat{t}_{z,\pi}}$ es sesgado para $B=\frac{t_y}{t_z}$ sólo si $z_k$ es continua.
+\item En diseños de muestreo de tamaño de muestra aleatorio, el estimador del promedio poblacional $\tilde{y}_S$ es insesgado y de menor varianza en comparación al estimador $\bar{y}_S$.
+\item En la estimación de una razón poblacional $B$, se cumple para la variable linealizada $E_k=\frac{1}{t_z}(y_k-Bz_k)$ que $\sum_S E_k =0$ sin importar el diseño de muestreo utilizado en el planeamiento del estudio.
+\item El estimador $\hat{B}=\frac{\hat{t}_{y,\pi}}{\hat{t}_{z,\pi}}$ es sesgado para $B=\frac{t_y}{t_z}$ sólo si $z_k$ es continua.
+\item En diseños de muestreo de tamaño de muestra aleatorio, el estimador del promedio poblacional $\tilde{y}_S$ es insesgado y de menor varianza en comparación al estimador $\bar{y}_S$.
+\item El método de linealización de Taylor para aproximar la varianza de parámetros complejos y en muestras pequeñas conduce generalmente a la sobre-estimación de la varianza real.
+\end{enumerate}
+
+\item Considere el ejercicio 7.4.
+\begin{enumerate}[(a)]
+\item Estime el número de personas en el país $\hat{N}$. Reporte el coeficiente de variación estimado.
+\item Estime el ingreso medio en el pais utilizando la razón de Háyek $\tilde{y}_S=t_{y,\pi}/\hat{N}$. Reporte el coeficiente de variación estimado.
+\end{enumerate}
+
+\item Considere el ejercicio 7.5.
+\begin{enumerate}[(a)]
+\item Si se seleccionó la zona norte, reporte la estimación del promedio de patas en la ciudad, utilizando la razón de Hájek $\tilde{y}_S=t_{y,\pi}/\hat{N}$.
+\item Si se seleccionó la zona norte, reporte la estimación del promedio de patas en la ciudad, utilizando la razón de Hájek $\tilde{y}_S=t_{y,\pi}/\hat{N}$.
+\item Para este diseño diseño de muestreo, reporte la aproximación de la varianza del estimador $\bar{y}_S$.
+\item ¿Cuál estimador escogería para inferir acerca del promedio de patas de los perros en la ciudad? ¿$\bar{y}_S$ o $\tilde{y}_S$?
+\item ¿Es mejor tener en cuenta a N, o es mejor estimarlo mediante $\hat{N}$?
+\end{enumerate}
+
+\end{enumerate}
+
+\clearpage
+\newpage
+\phantom{Ard}
+\thispagestyle{empty} 
 
 
 

@@ -285,10 +285,18 @@ grid.arrange(p1, p2, p3, p4, ncol = 2)
 \label{F1.2}
 \end{figure}
 
-Las figuras \ref{F1.1} y \ref{F1.2} muestran la dispersión y locación de las características de interés por cada nivel industrial. En general, las empresas grandes tienen ingresos más altos, aportan una carga impositiva más alta y emplean a más personas que las empresas medianas y pequeñas. Es deseable que el marco de muestreo contenga la pertenencia al nivel industrial de cada empresa en la población porque es un buen discriminante y permite la implementación de estrategias de muestreo adecuadas que guíen a estimaciones más precisas. La función n \texttt{barplot} muestra un diagrama de barras del total de la variable \texttt{Level}.
+Las figuras \ref{F1.1} y \ref{F1.2} muestran la dispersión y locación de las características de interés por cada nivel industrial. En general, las empresas grandes tienen ingresos más altos, aportan una carga impositiva más alta y emplean a más personas que las empresas medianas y pequeñas. Es deseable que el marco de muestreo contenga la pertenencia al nivel industrial de cada empresa en la población porque es un buen discriminante y permite la implementación de estrategias de muestreo adecuadas que guíen a estimaciones más precisas.
+
+<<message=FALSE, fig.keep='none'>>=
+p1 <- qplot(Income, data=BigLucy, geom=c("histogram"))
+p2 <- qplot(Employees, data=BigLucy, geom=c("histogram"))
+p3 <- qplot(Taxes, data=BigLucy, geom=c("histogram"))
+p4 <- qplot(Years, data=BigLucy, geom=c("histogram"))
+grid.arrange(p1, p2, p3, p4, ncol = 2)
+@
 
 \begin{figure}[!h]
-<<fig.height=5>>=
+<<echo=FALSE, message=FALSE, fig.height=5>>=
 p1 <- qplot(Income, data=BigLucy, geom=c("histogram"))
 p2 <- qplot(Employees, data=BigLucy, geom=c("histogram"))
 p3 <- qplot(Taxes, data=BigLucy, geom=c("histogram"))
