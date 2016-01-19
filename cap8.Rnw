@@ -965,12 +965,13 @@ N <- 500
 b <- 10
 sigma <- 2
 
-x <- runif(N, 10, 20)
+z <- c(1:N)
+x <- rep(1, N)
 e <- rnorm(N, 0, sigma)
-y <- b + e 
+y <- b * x + e 
 
 data <- data.frame(x, y)
-ggplot(data, aes(x = x, y = y)) + geom_point(shape=1) + geom_smooth(method = lm)
+ggplot(data, aes(x = z, y = y)) + geom_point(shape=1) + geom_smooth(method = lm)
 @
 \caption[Modelo de media común]{\emph{Gráfico de dispersión de un modelo de media común.}}
 \label{F8.3}

@@ -1,0 +1,25 @@
+%--------------------
+<<echo=FALSE, message=FALSE>>=
+library(TeachingSampling)
+data(BigLucy)
+library(xtable)
+library(ggplot2)
+library(gridExtra)
+options(scipen = 100, digits = 2)
+set.seed(12345)
+library(knitr)
+knit_theme$set("acid")
+@
+%--------------------
+\chapter[Estimadores de calibración]{Estimadores de calibración}
+
+\begin{quote}
+\textsf{La calibración [como proceso] se ha establecido como un importante instrumento metodológico en la producción de grandes masas de estadísticas. La mayoría de agencias estadísticas han de\-sa\-rro\-lla\-do software especialmente diseñado para calcular las ponderaciones resultantes, usualmente calibradas a la información auxiliar disponible en registros administrativos y otras fuentes precisas.}
+\begin{flushright}
+\textsf{\citeasnoun{Sar08}}
+\end{flushright}
+\end{quote}
+
+El proceso de calibración es el tema principal de los más recientes artículos publicados acerca de estimación en poblaciones finitas y muestreo. Este fenómeno se presenta debido a que la calibración provee una forma sistemática para la incorporación de la información auxiliar en la etapa de estimación en una encuesta. Un estimador de calibración es aquel estimador lineal\index{Estimador lineal} que tiene la agradable propiedad de la representatividad bajo cualquier diseño de muestreo; aunque el término calibración es nuevo, hay autores que coinciden en afirmar que han usado calibración desde mucho tiempo atrás, antes de conocer este proceso con éste nombre.
+
+Como \citeasnoun{Sar08} afirma, el ítem más importante en la calibración, como proceso sistemático de estimación, es la existencia de información auxiliar. Si no hay información auxiliar no hay nada a lo que se pueda calibrar, y por tanto no habrán estimadores de calibración que aplicar. Como se verá a lo largo del capítulo, los estimadores generales de regresión pueden arrojar los mismos resultados que los estimadores de calibración; sin embargo, el espíritu y la esencia de su aplicación tienen direcciones marcadamente diferentes.
