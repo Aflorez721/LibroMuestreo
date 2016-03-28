@@ -37,6 +37,7 @@
 %--------------------------------------------------------------------------------
 
 \begin{document}
+%\SweaveOpts{concordance=TRUE}
 \selectlanguage{spanish}
 \bibliographystyle{agsm}
 
@@ -81,16 +82,18 @@
 % --------------------------------------------------------------------------------
 \mainmatter
 \pagestyle{fancy}
-\Sexpr{knit_child('cap1.Rnw')}
-\Sexpr{knit_child('cap2.Rnw')}
-\Sexpr{knit_child('cap3.Rnw')}
-\Sexpr{knit_child('cap4.Rnw')}
-\Sexpr{knit_child('cap5.Rnw')}
-\Sexpr{knit_child('cap6.Rnw')}
-\Sexpr{knit_child('cap7.Rnw')}
-\Sexpr{knit_child('cap8.Rnw')}
-\Sexpr{knit_child('cap9.Rnw')}
-\Sexpr{knit_child('cap10.Rnw')}
+% \Sexpr{knit_child('cap1.Rnw')}
+% \Sexpr{knit_child('cap2.Rnw')}
+% \Sexpr{knit_child('cap3.Rnw')}
+% \Sexpr{knit_child('cap4.Rnw')}
+% \Sexpr{knit_child('cap5.Rnw')}
+% \Sexpr{knit_child('cap6.Rnw')}
+% \Sexpr{knit_child('cap7.Rnw')}
+% \Sexpr{knit_child('cap8.Rnw')}
+% \Sexpr{knit_child('cap9.Rnw')}
+% \Sexpr{knit_child('cap10.Rnw')}
+%\Sexpr{knit_child('cap11.Rnw')}
+\Sexpr{knit_child('cap12.Rnw')}
 % --------------------------------------------------------------------------------
 \bibliography{LibroBib}
 % --------------------------------------------------------------------------------
