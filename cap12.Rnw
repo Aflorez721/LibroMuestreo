@@ -1,3 +1,17 @@
+%--------------------
+<<echo=FALSE, message=FALSE>>=
+library(TeachingSampling)
+data(BigLucy)
+library(xtable)
+library(ggplot2)
+library(gridExtra)
+options(scipen = 100, digits = 2)
+set.seed(12345)
+library(knitr)
+knit_theme$set("acid")
+@
+%--------------------
+
 \chapter[Muestreo en dos fases]{Muestreo en dos fases}
 
 \begin{quote}
@@ -589,3 +603,208 @@ En este primer escenario se considera que el marco de muestreo es deficiente y s
 Suponga que el investigador conoce que el sector industrial está dividido en tres niveles. Grande, Mediano y Pequeño y que además el comportamiento de las características de interés es sustancialmente diferente en cada uno de los anteriores subgrupos poblacionales. Si las bondades del marco de muestreo llegaran hasta determinar la clasificación de cada empresa a alguno de los anteriores tres estratos, entonces podría utilizarse un diseño de muestreo estratificado para mejorar la estimación. Sin embargo, suponga que no es posible contar con tal información a nivel poblacional. Sin embargo, existen algunas entidades de origen privado que venden esta información a un precio razonable. La mala noticia es que, debido a conflictos de intereses, no entregan la lista completa sino un subconjunto de 1000 de las 2396 empresas del sector industrial. La buena noticia es que el investigador puede determinar las mil empresas a su gusto.
 
 Bajo la anterior configuración, es posible utilizar un diseño de muestreo bifásico de la siguiente manera: en la primera fase, seleccionar una muestra de tamaño $n_a=1000$ y obtener la información del nivel para cada una de las empresas incluidas en esta primera muestra. Para esto, se utiliza la función \texttt{S.SI} del paquete \texttt{TeachingSampling} para obtener la primera muestra que será llamada como \texttt{Fase1}.
+
+<<message=FALSE>>=
+data(BigLucy)
+N <- dim(BigLucy)[1]
+n <- 4000
+sam <- S.SI(N,n)
+Fase1 <- BigLucy[sam,]
+attach(Fase1)
+head(Fase1)
+@
+
+La muestra realizada en la primera fase es de tamaño 1000 y está dividida en cada uno de los tres estratos. Por otro lado, en la segunda fase, y acudiendo a la información de pertenencia a los estratos, se selecciona una segunda muestra estratificada de tamaño $n=2000$ y para esto se configura la función \texttt{S.STSI} del paquete \texttt{TeachingSampling}.
+
+<<message=FALSE>>=
+na1 <- summary(Level)[[1]]
+na2 <- summary(Level)[[2]]
+na3 <- summary(Level)[[3]]
+n.a <- c(na1,na2,na3)
+n.a
+
+n1 <- 120
+n2 <- 880
+n3 <- 1000
+n <- c(n1,n2,n3)
+
+sam <- S.STSI(Level,n.a,n)
+data.fase2 <- Fase1[sam,]
+head(data.fase2)
+attach(data.fase2)
+@
+
+La submuestra realizada en la segunda fase es de tamaño 400 y está dividida en cada uno de los tres estratos. Una vez conseguida la información, se procede a estimar las cantidades de interés. Para esto se utiliza la función \texttt{E.STSI} del paquete \texttt{TeachingSampling}, la cual arroja las estimaciones expandidas a la muestra de la primera fase. Para expandirlas a la población basta con multiplicarlas por el inverso de la probabilidad de inclusión de la primera muestra\footnote{Esta operación \textbf{solamente} tiene sentido para las estimaciones de los totales y no para las varianzas ni sus estimaciones. Por lo tanto, estas se deben obviar puesto que no conducen al verdadero valor de las cantidades mencionadas.}. Los resultados se muestran a continuación.
+
+<<message=FALSE>>=
+estima <- data.frame(Income, Employees, Taxes)
+(N/sum(n.a))*E.STSI(Level,n.a,n,estima)[1,,]
+@
+
+Nótese que esta estrategia es recomendable cuando se desean obtener estimaciones eficiente por subgrupos poblacionales.
+
+
+\subsection*{Segunda configuración: selección proporcional al tamaño}
+
+En este apartado suponga que se tienen las mismas condiciones que en el escenario anterior. Sin embargo, el interés ahora no se centra en la estimación eficiente de los totales de la característica de interés dentro de algunos subgrupos poblacionales sino en la estimación eficiente del total poblacional de las características de interés. De esta manera, se desea ejecutar un diseño de muestreo aleatorio simple, en una primera etapa, para poder incorporar información auxiliar en la segunda etapa. Como antes, se utiliza la función \texttt{S.SI} del paquete \texttt{TeachingSampling} para la selección de esta primera muestra.
+
+<<message=FALSE>>=
+data(BigLucy)
+N <- dim(BigLucy)[1]
+na <- 4000
+sam <- S.SI(N,na)
+Fase1 <- BigLucy[sam,]
+attach(Fase1)
+@
+
+Una vez se ha seleccionado la muestra, el investigador se ve forzado a recopilar información auxiliar que le permita mejorar la estrategia de muestreo. En este caso, el investigador conoce que la característica Ingreso está relacionada directamente con las características de interés Número de Empleados e Impuestos. Además, es fácil conseguir tal información, puesto que, al igual que en la configuración anterior, existe una entidad que suministra dicha información aunque sólo para 1000 empresas por términos de cláusulas de confidencialidad. De esta manera, el investigador recopila los datos de Ingreso para las 1000 empresas incluidas en la muestra de la primera fase y toma la decisión de mejorar la estrategia de muestreo por medio de la incorporación de esta información auxiliar en el diseño de muestreo. En este orden de ideas, él decide utilizar un diseño de muestreo proporcional al Ingreso de las empresas. Para la selección de la submuestra se utiliza la función \texttt{S.PPS} del paquete \texttt{TeachingSampling}. La submuestra es de tamaño $m=400$ y se selecciona con reemplazo.
+
+<<message=FALSE>>=
+n <- 2000
+res <- S.PPS(n, Income)
+sam <- res[,1]
+pk.s <- res[,2]
+sum(pk.s)
+
+data <- Fase1[sam,]
+attach(data)
+estima <- data.frame(Income, Employees, Taxes)
+@
+
+Para la estimación del total poblacional de las características de interés se procede con la función \texttt{E.PPS} del paquete \texttt{TeachingSampling}, la cual provee la estimación expandida en la muestra de la Fase 1. Para expandir los resultados a la población, una vez más, basta con multiplicar estos resultados por el inverso de la probabilidad de inclusión de la primera fase dada por 2396/1000.
+
+<<message=FALSE>>=
+(N/na)*E.PPS(estima,pk.s)[1,]
+@
+
+\subsection*{Tercera configuración: estimación de calibración}
+
+Para este último escenario, suponga que el investigador selecciona una muestra aleatoria simple para la primera fase de muestreo con el fin de recolectar información que le permita mejorar la estrategia de muestreo.
+
+<<message=FALSE>>=
+data(BigLucy)
+N <- dim(BigLucy)[1]
+na <- 4000
+sam <- S.SI(N,na)
+Fase1 <- BigLucy[sam,]
+attach(Fase1)
+@
+
+Suponga ahora, que la entidad que provee la información, está dispuesta a brindar para cada una de las empresas incluidas en la muestra de la primera fase, no sólo la información del Ingreso sino que también la información acerca del Número de Empleados. De esta forma, el investigador propone seleccionar una submuestra mediante un diseño de muestreo aleatorio simple y combinarlo con un estimador de calibración mediante el método de Raking.
+
+<<message=FALSE>>=
+t.ax  <- c(na, sum(Income), sum(Employees))
+n <- 2000
+sam <- S.SI(na,n)
+data <- Fase1[sam,]
+attach(data)
+@
+
+Para estimar los resultados expandidos a la primera fase se utiliza la función \texttt{calib} del paquete \texttt{Sampling}, la cual proporciona las ponderaciones calibradas para la Fase 1. De la misma manera, estos resultados se expanden a la población mediante la multiplicación del inverso de la probabilidad de inclusión de la primera muestra.
+
+<<message=FALSE>>=
+library(sampling)
+y.as  <- data.frame(Income, Employees, Taxes)
+x.as  <- cbind(1, Income, Employees)
+pi.ak <- rep(n/na, times=n)
+w.ak <- calib(x.as, d = 1/pi.ak, t.ax, method="raking")
+
+tc.a <- t(w.ak/pi.ak) %*% as.matrix(y.as)
+(N/na) * tc.a
+@
+
+\subsubsection*{Comparación de resultados}
+
+Aunque a primera vista, parecería que los resultados no tan cercanos a los totales poblacionales verdaderos, nótese que en particular para la características de interés Ingreso se obtiene una ganancia amplia comparado con un diseño de muestreo aleatorio simple. Nótese también que en este caso, el estimador de calibración arroja mejores resultados.
+
+\begin{table}[!htb]\label{tablacalib}
+\caption[Muestreo bifásico: estimación de totales]{\emph{Estimaciones realizadas bajo distintos escenarios para el muestreo bifásico.}}
+\centering
+\begin{tabular}{cccc}\hline\hline
+Método        & Total poblacional & Total estimado &  Desv. \% \\\hline
+Estratos      & 28654             & 27854          &  -2.79\\
+Proporcional  & 28654             & 30031          &  4.81\\
+Calibración   & 28654             & 27995          &  -2.29\\\hline\hline
+\end{tabular}
+\end{table}
+
+\section{Ejercicios}
+
+\begin{enumerate}[{12}.1]
+
+\item Suponga un estudio longitudinal que plantea tres encuestas, tipo semipanel, en diferentes tiempos. Para la tercera medición, se utilizó un diseño de muestreo con una rotación del 20\% para las siguientes posibles especificaciones:
+\begin{itemize}
+  \item De tamaño $n_1$ que fue seleccionada sólo de la muestra de la primera medición.
+  \item De tamaño $n_{12}$ que fue seleccionada de las muestras de las mediciones uno y dos.
+  \item De tamaño $n_{123}$ que fue seleccionada de las muestras de las tres mediciones.
+  \item De tamaño $n_{23}$ que fue seleccionada de las muestras de las mediciones dos y tres.
+  \item De tamaño $n_{3}$ que fue seleccionada de la muestra de la tercera medición.
+\end{itemize}
+
+\begin{enumerate}[a.]
+  \item Dibuje un diagrama que ilustre la rotación de la muestra en las tres mediciones y los tamaños relativos de las cinco configuraciones anteriores.
+  \item Proponga una fórmula para la estimación del total poblacional de la característica de interés en la tercera medición para las cinco configuraciones anteriores.
+  \item Sin escribir ninguna fórmula estadística para las varianzas, indique en cuál de estas configuraciones y por qué, induce mayor eficiencia en las estimaciones.
+\end{enumerate}
+
+\item Suponga un diseño de muestreo en dos fases. En la primera fase, se seleccionó una muestra aleatoria simple sin reeemplazo $s_a$ de tamaño $n_a=150$. En esta fase se levantó la información de una característica de interés $x$. En la segunda fase, se decidió seleccionar una muestra $s$, mediante un diseño de muestreo Poisson con tamaño de muestra esperado $n_s=10$, mediante probabilidades de inclusión proporcionales a la característica de información auxiliar. La información para la muestra de la segunda fase es como sigue a continuación:
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{cc}
+  \hline
+  y     & x \\ \hline
+  2653  & 33 \\
+  17949 & 247 \\
+  1060  & 12 \\
+  1324  & 12 \\
+  2223  & 18 \\
+  2553  & 30 \\
+  2216  & 20 \\
+  13205 & 138 \\
+  3475  & 35 \\
+  7072  & 62 \\
+  4623  & 47 \\
+  \hline
+\end{tabular}
+\end{table}
+
+\begin{enumerate}[a.]
+  \item Calcule una estimación insesgada para el total poblacional de $y$, teniendo en cuenta que el total de la característica de interés en la muestra de la primera fase es 4060.
+  \item Utilice la siguiente expresión para calcular el respectivo coeficiente de variación estimado
+\begin{align*}
+\widehat{Var}(\hat{t}_{y,\pi^*})&=
+\left(\frac{N}{n}\bar{x}_{s_a}\right)^2\frac{1}{n_a-1}
+\left[(n_a-f_a)\sum_s \left(\frac{y_k}{x_k}\right)^2-(1-f_a)\left(\sum_s\frac{y_k}{x_k}\right)^2\right]
+- \frac{N}{n}\bar{x}_{s_a}\sum_s\frac{y_k^2}{x_k}
+\end{align*}
+\end{enumerate}
+
+\item Asuma que la muestra de la segunda fase del ejercicio anterior se obtuvo mediante muestreo PPT. Calcule una estimación insesgada para el total poblacional de $y$ y calcule el respectivo coeficiente de variación estimado.
+
+\item Suponga un diseño de muestreo en dos fases. En la primera fase, se seleccionó una muestra aleatoria simple sin reeemplazo $s_a$ de tamaño $n_a=160$. En esta fase se estratificó la población en cuatro subgrupos, cada uno de tamaño 40. En la segunda fase, se decidió seleccionar una muestra aleatoria estratificada de $20$ elementos en cada estrato y se observó la característica de interés. Los resultados obtenidos se muestran a continuación:
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{ccc}
+  \hline
+  Estrato $h$ & $\bar{y}_{s_h}$ & $S^2_{y_{s_h}}$ \\ \hline
+  1           & 17.05           & 19945 \\
+  2           & 19.75           & 24179 \\
+  3           & 22.40           & 28359 \\
+  4           & 31.25           & 42829 \\
+  \hline
+\end{tabular}
+\end{table}
+
+\begin{enumerate}[a.]
+  \item Calcule una estimación insesgada para el total poblacional de $y$.
+  \item Obtenga una estimación para la varianza y reporte el respectivo coeficiente de variación estimado.
+  \item Obtenga una estimación para la varianza y reporte el respectivo coeficiente de variación estimado, suponiendo que la muestra hubiese sido obtenido de un muestreo, en una sola fase, aleatorio estratificado de tamaño $n=80$.
+\end{enumerate}
+
+\end{enumerate}
+
+
+
+
