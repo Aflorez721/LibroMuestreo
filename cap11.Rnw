@@ -12,8 +12,6 @@ knit_theme$set("acid")
 @
 %--------------------
 
-\part[Otros tópicos de muestreo]{Otros tópicos avanzados de muestreo}
-
 \chapter[Muestreo Balanceado]{Muestreo balanceado}
 
 \begin{quote}
